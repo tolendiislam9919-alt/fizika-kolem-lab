@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Денелердің көлемін өлшеу — 7-сынып</title>
+<style>
+:root{
+  --paper:#f3efe4; --card:#fbf9f3; --ink:#1d2430; --muted:#6a6658; --line:#d8d0bd;
+  --blue:#2d5f4f; --blue-d:#21483c; --yellow:#e0a92e; --red:#b8442f; --green:#2e7d4f; --brass:#c79a3a;
+  --frame:#6b4a2b; --board:#1d2a26;
+  --g0:#c8352b; --g1:#2e7d4f; --g2:#1f5fa8;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#2a2d31}
+body{color:var(--ink);font-family:"Segoe UI","Noto Sans",system-ui,sans-serif}
+.stage{position:absolute;left:0;top:0;width:1600px;height:900px;transform-origin:0 0;background:var(--paper);overflow:hidden;
+  background-image:linear-gradient(rgba(45,95,79,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(45,95,79,.05) 1px,transparent 1px);background-size:24px 24px}
+.top{position:absolute;left:0;right:0;top:0;height:54px;display:flex;align-items:center;gap:14px;padding:0 16px 0 22px;background:var(--blue);color:#fff}
+.top .sign{min-width:34px;height:30px;border-radius:4px;background:var(--brass);display:grid;place-items:center;font:800 13px Georgia,serif;color:#2a1f0c;padding:0 6px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.2)}
+.top .lesson{font-size:13px;letter-spacing:2px;text-transform:uppercase;opacity:.85}
+.top .stitle{font-family:Georgia,"Times New Roman",serif;font-size:20px;font-weight:600;white-space:nowrap}
+.top .sep{width:1px;height:22px;background:rgba(255,255,255,.35)}
+.gchips{margin-left:auto;display:flex;gap:6px}
+.gchip{display:flex;align-items:center;gap:7px;border:none;border-radius:18px;padding:3px 4px 3px 12px;color:#fff;font:600 14px "Segoe UI";cursor:pointer;user-select:none}
+.gchip b{font:800 19px Georgia,serif;min-width:26px;text-align:center}
+.gchip .mn{width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.25);display:grid;place-items:center;font-size:15px}
+.mainw{position:absolute;left:0;right:0;top:54px;bottom:58px;display:flex}
+.leftw{position:relative;width:1040px;flex:none;transition:width .35s ease}
+.stage.wide .leftw,.stage.noboard .leftw{width:100%}
+.stage.wide .rightw,.stage.noboard .rightw{display:none}
+.slide{position:absolute;inset:0;display:none;overflow:hidden}
+.slide.on{display:block;animation:fadein .3s ease}
+.slide.nofit{padding:18px 26px 14px 30px;flex-direction:column;gap:12px}
+.slide.nofit.on{display:flex}
+.sc{position:absolute;top:13px;left:24px;width:900px;display:flex;flex-direction:column;gap:12px;transform-origin:0 0}
+.duo{display:flex;flex-direction:column;gap:12px}
+.duo>div{display:flex;flex-direction:column;gap:12px;min-width:0}
+.stage.noboard .duo{flex-direction:row;align-items:flex-start;gap:18px}
+.stage.noboard .duo>.pa{flex:1.12} .stage.noboard .duo>.pb{flex:1}
+.leftw.notrans{transition:none}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+h2.st{font-family:Georgia,"Times New Roman",serif;font-weight:700;font-size:32px;margin:0;color:var(--ink)}
+h2.st small{display:block;font:600 13px "Segoe UI",sans-serif;letter-spacing:2.2px;color:var(--blue);text-transform:uppercase;margin-bottom:3px}
+p.lead{font-size:19px;line-height:1.5;margin:0;color:#2c3340}
+.fbox{background:#fff;border:1px solid var(--line);border-left:6px solid var(--yellow);border-radius:4px;padding:10px 16px;font-family:"Cambria Math","Times New Roman",serif;font-size:20px;line-height:1.6}
+.fbox .big{font-size:28px;font-style:italic;font-weight:600}
+canvas.lab{display:block;max-width:100%;margin:0 auto;border:1px solid var(--line);border-radius:4px;background:#e9e3d3}
+.row{display:flex;gap:14px;align-items:stretch}
+.col{display:flex;flex-direction:column;gap:10px}
+.grow{flex:1;min-width:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:5px;padding:11px 14px}
+.card h3{margin:0 0 8px;font:700 15px "Segoe UI",sans-serif;text-transform:uppercase;letter-spacing:.6px;color:var(--blue)}
+.ctl .lab{display:flex;justify-content:space-between;align-items:baseline;font-size:15px;color:var(--muted);margin-bottom:4px}
+.ctl .val{font:700 18px Georgia,serif;color:var(--ink)}
+input[type=range]{width:100%;accent-color:var(--blue);height:22px;margin:0}
+.btn{font:inherit;font-size:15px;padding:7px 14px;cursor:pointer;border-radius:4px;border:1px solid #c9c0aa;background:#fff;color:var(--ink)}
+.btn:hover{border-color:var(--blue)}
+.btn.main{background:var(--blue);border-color:var(--blue-d);color:#fff;font-weight:600}
+.btn.main:hover{background:var(--blue-d)}
+.btn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn:disabled{opacity:.4;cursor:default}
+.warn{border:1px dashed var(--red);background:#fff4f2;border-radius:4px;padding:8px 13px;font-size:16px;line-height:1.45}
+.warn b{color:var(--red)}
+.tip{border:1px dashed var(--blue);background:#eef5f1;border-radius:4px;padding:8px 13px;font-size:16px;line-height:1.45}
+ul.pl{margin:0;padding-left:22px;font-size:19px;line-height:1.6}
+table.t{border-collapse:collapse;width:100%;font-size:16px;background:#fff}
+table.t th,table.t td{border:1px solid var(--line);padding:5px 9px;text-align:center}
+table.t th{background:#e4ece7;font-size:13px;text-transform:uppercase;letter-spacing:.4px;color:#2c3340}
+table.t td.l{text-align:left}
+table.t input{font:inherit;font-size:16px;width:84px;padding:3px 6px;border:1px solid #c9c0aa;border-radius:3px;text-align:center}
+sup,sub{font-size:.72em;line-height:0}
+.good{color:var(--green);font-weight:700} .bad{color:var(--red);font-weight:700}
+.chk{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:17px}
+.chk input{font:inherit;font-size:17px;width:90px;padding:5px 8px;border:1px solid #c9c0aa;border-radius:4px}
+
+/* таразы зертханасы */
+.wset{display:flex;flex-wrap:wrap;gap:6px}
+.wb{font:600 15px Georgia,serif;padding:7px 10px;min-width:60px;border-radius:5px;border:1px solid #a98538;background:linear-gradient(#f3dc9a,#d4ab4f);color:#3a2a08;cursor:pointer}
+.wb.mg{background:linear-gradient(#f2f2f2,#c9ccd0);border-color:#8d939a}
+.wb:disabled{opacity:.25;cursor:default}
+.objs{display:flex;flex-wrap:wrap;gap:6px}
+.status{font-size:17px;line-height:1.45;min-height:50px}
+.status b{color:var(--blue)}
+
+/* таймер */
+.timer{font:700 104px/1 Consolas,monospace;color:var(--ink);text-align:center;letter-spacing:2px}
+.timer.low{color:var(--red)}
+.rot td.cur{background:#fff3cf;font-weight:700}
+.stn{display:inline-block;padding:1px 8px;border-radius:10px;color:#fff;font-size:13px}
+
+/* топқа бөлу */
+.gdiv{display:grid;grid-template-columns:420px 1fr;gap:22px;align-items:start}
+.gcard{width:420px;height:420px;border-radius:22px;display:grid;place-items:center;text-align:center;cursor:pointer;user-select:none;touch-action:manipulation;
+  background:repeating-linear-gradient(45deg,#2d5f4f 0 22px,#346b5a 22px 44px);color:#fff;box-shadow:0 10px 24px rgba(0,0,0,.2),inset 0 0 0 8px rgba(255,255,255,.15);transition:transform .15s}
+.gcard:active{transform:scale(.98)}
+.gcard .q{font:800 120px/1 Georgia,serif}
+.gcard .tx{font:700 26px "Segoe UI";margin-top:8px}
+.gcard.res .q{font-size:46px} .gcard.res .tx{font-size:22px;opacity:.9}
+.gcols{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.gcol{background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden;min-height:330px}
+.gcol h4{margin:0;padding:8px 10px;color:#fff;font:700 18px "Segoe UI";display:flex;justify-content:space-between}
+.gcol ol{margin:6px 0;padding-left:30px;font-size:16px;line-height:1.55}
+
+/* миға шабуыл */
+.bgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.bq{min-height:150px;border-radius:10px;background:#fff;border:2px solid var(--line);padding:12px 14px;cursor:pointer;user-select:none;display:flex;flex-direction:column;justify-content:center;transition:.2s}
+.bq .n{font:800 54px Georgia,serif;color:var(--blue);text-align:center}
+.bq .qq{display:none;font-size:18.5px;line-height:1.4;font-weight:600}
+.bq .aa{display:none;font-size:16.5px;line-height:1.35;color:var(--green);margin-top:8px;border-top:1px dashed var(--line);padding-top:6px}
+.bq.open{border-color:var(--brass);background:#fffaf0} .bq.open .n{display:none} .bq.open .qq{display:block}
+.bq.ans .aa{display:block}
+
+/* топтық тапсырма */
+.gtask{border-radius:8px;background:#fff;border:1px solid var(--line);border-top:8px solid;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.gtask h4{margin:0;font:700 19px "Segoe UI"}
+.gtask .tx{font-size:17px;line-height:1.45;flex:1}
+.gtask .ai{display:flex;gap:6px;align-items:center;font-size:16px;flex-wrap:wrap}
+.gtask input{font:inherit;font-size:17px;width:90px;padding:4px 7px;border:1px solid #c9c0aa;border-radius:4px}
+.gtask .r{font-size:15px;min-height:22px}
+
+/* тапсырмалар */
+.who{display:flex;align-items:center;gap:8px;font-size:17px;flex-wrap:wrap}
+.who select{font:inherit;font-size:17px;padding:5px 8px;border:1px solid #c9c0aa;border-radius:4px;min-width:260px}
+.tq{background:#fff;border:1px solid var(--line);border-radius:5px;padding:8px 12px;display:grid;grid-template-columns:46px 1fr;gap:4px 10px;align-items:start}
+.tq .lv{grid-row:span 2;font:800 22px Georgia,serif;color:#fff;border-radius:5px;text-align:center;padding:6px 0}
+.tq .qt{font-size:17px;line-height:1.4}
+.tq .ans{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.ai input{font:inherit;font-size:17px;width:110px;padding:4px 7px;border:1px solid #c9c0aa;border-radius:4px}
+.ai input.okk{border-color:var(--green);background:#e8f4ec} .ai input.nok{border-color:var(--red);background:#fdecea}
+.ai{display:flex;gap:6px;align-items:center;font-size:16.5px}
+.ai .r{font-size:14px;min-width:20px}
+.lvA{background:#4f8a6e} .lvB{background:#c79a3a} .lvC{background:#b8442f}
+.score{margin-left:auto;font:700 22px Georgia,serif}
+
+/* бағалау */
+.gwrap{display:grid;grid-template-columns:1fr 330px;gap:16px;flex:1;min-height:0}
+.gtab{overflow:auto;border:1px solid var(--line);border-radius:4px;background:#fff}
+.gtab table.t{font-size:15px} .gtab th{position:sticky;top:0}
+textarea.roster{width:100%;flex:1;font:15px/1.5 "Segoe UI",sans-serif;padding:8px;border:1px solid #c9c0aa;border-radius:4px;resize:none}
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sum div{background:#fff;border:1px solid var(--line);border-radius:5px;padding:8px;text-align:center}
+.sum b{display:block;font:700 28px Georgia,serif}
+
+/* дуэль */
+.duel{position:absolute;inset:0;display:grid;grid-template-columns:1fr 170px 1fr;touch-action:none;user-select:none;-webkit-user-select:none}
+.side{padding:18px 22px;display:flex;flex-direction:column;gap:14px}
+.side.A{background:linear-gradient(180deg,#f6dcd8,#efc6c0)} .side.B{background:linear-gradient(180deg,#d9e6f6,#c4d7f0)}
+.side .whoq{display:flex;align-items:center;gap:12px}
+.side .whoq input{font:700 24px Georgia,serif;border:none;border-bottom:2px dashed rgba(0,0,0,.25);background:transparent;width:280px;padding:2px 4px}
+.side .sc2{margin-left:auto;font:800 58px Georgia,serif;line-height:1}
+.side.A .sc2{color:#b8442f} .side.B .sc2{color:#1f5fa8}
+.side .qq2{background:#fff;border-radius:10px;padding:16px 18px;font:700 40px/1.3 "Segoe UI",sans-serif;min-height:170px;text-align:center;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,.08)}
+.side .opts{display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:1;align-content:start}
+.side .o{font:700 34px Georgia,serif;padding:20px 10px;border-radius:12px;border:3px solid rgba(0,0,0,.12);background:#fff;cursor:pointer;touch-action:none;min-height:110px;-webkit-tap-highlight-color:transparent}
+.side .o.good{background:#2e7d4f;color:#fff;border-color:#1f5a38}
+.side .o.badc{background:#c8352b;color:#fff;border-color:#8e241d}
+.side .o.dim{opacity:.4}
+.side .stat{font:600 19px "Segoe UI";min-height:28px;display:flex;justify-content:space-between}
+.pbar{height:10px;background:rgba(255,255,255,.6);border-radius:5px;overflow:hidden}
+.pbar i{display:block;height:100%;width:0;transition:width .3s}
+.side.A .pbar i{background:#b8442f} .side.B .pbar i{background:#1f5fa8}
+.mid{background:var(--ink);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:10px;text-align:center}
+.mid .lbl{font-size:13px;letter-spacing:1.5px;text-transform:uppercase;opacity:.7}
+.mid .clock{font:700 30px Consolas,monospace;color:var(--yellow)}
+.mid .btn{width:140px}
+.overlay{position:absolute;inset:0;background:rgba(29,36,48,.82);display:flex;align-items:center;justify-content:center;z-index:5}
+.overlay .box{background:#fff;border-radius:12px;padding:28px 36px;text-align:center;max-width:760px}
+.overlay h3{font:700 38px Georgia,serif;margin:0 0 10px}
+.overlay p{font-size:20px;color:#444;line-height:1.5}
+
+/* ФС 3D */
+#fs3d{display:block;width:470px;height:560px;border-radius:6px;border:1px solid var(--line);cursor:grab;touch-action:none;background:#dfe6ea}
+.fsq{display:grid;grid-template-columns:auto 1fr;gap:8px 10px;align-items:center;font-size:17px}
+.fsq input{font:inherit;font-size:17px;width:100px;padding:4px 7px;border:1px solid #c9c0aa;border-radius:4px}
+
+/* бағдаршам */
+.lights{display:flex;gap:26px;justify-content:center;align-items:flex-end}
+.lt{display:flex;flex-direction:column;align-items:center;gap:8px}
+.lt .c{width:150px;height:150px;border-radius:50%;display:grid;place-items:center;font:800 54px Georgia,serif;color:#fff;cursor:pointer;box-shadow:inset 0 -10px 0 rgba(0,0,0,.15),0 6px 14px rgba(0,0,0,.15);user-select:none}
+.lt .tx{font-size:17px;text-align:center;max-width:190px;line-height:1.3}
+.lt .mn{font-size:13px;padding:2px 10px}
+.bar{display:flex;height:22px;border-radius:4px;overflow:hidden;border:1px solid var(--line);background:#fff}
+.bar i{display:block;height:100%;transition:width .3s}
+
+/* тақта */
+.rightw{flex:1;padding:14px 18px 14px 22px;display:flex;position:relative;transition:transform .3s}
+.rightw.drag{transition:none}
+.grip{position:absolute;left:0;top:50%;transform:translateY(-50%);width:26px;height:190px;border-radius:10px;background:#8a6a48;cursor:ew-resize;touch-action:none;
+  display:flex;align-items:center;justify-content:center;color:#f1e6d4;font-size:14px;font-weight:600;writing-mode:vertical-rl;letter-spacing:2px;box-shadow:0 3px 8px rgba(0,0,0,.25);z-index:3;user-select:none}
+.btab{position:absolute;right:0;top:50%;transform:translateY(-50%);width:34px;height:170px;border-radius:12px 0 0 12px;background:var(--frame);color:#f1e6d4;
+  display:none;align-items:center;justify-content:center;writing-mode:vertical-rl;font:600 15px "Segoe UI";letter-spacing:2px;cursor:pointer;z-index:6;touch-action:none;box-shadow:-3px 3px 10px rgba(0,0,0,.25)}
+.stage.noboard:not(.wide) .btab{display:flex}
+.board{flex:1;position:relative;border:10px solid var(--frame);border-radius:6px;display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:inset 0 0 40px rgba(0,0,0,.55),0 10px 24px rgba(0,0,0,.25);
+  background:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px) 0 0/100% 46px,radial-gradient(ellipse at 30% 20%,#25352f 0%,var(--board) 70%)}
+.board::after{content:"";position:absolute;left:0;right:0;bottom:0;height:12px;background:linear-gradient(#5a3e24,#3f2a17);pointer-events:none}
+.tools{display:flex;align-items:center;gap:6px;padding:7px 9px;background:rgba(0,0,0,.25);border-bottom:1px solid rgba(255,255,255,.06);z-index:2;flex-wrap:wrap}
+.sw{width:25px;height:25px;border-radius:50%;border:2px solid transparent;cursor:pointer;padding:0;flex:none}
+.sw.on{border-color:#fff;box-shadow:0 0 0 2px rgba(0,0,0,.6)}
+.tb{white-space:nowrap;font:inherit;font-size:13px;background:rgba(255,255,255,.06);color:#dfe7e2;border:1px solid rgba(255,255,255,.12);border-radius:3px;padding:4px 8px;cursor:pointer;flex:none}
+.tb:hover{background:rgba(255,255,255,.14)} .tb.on{background:#e8e3cf;color:#1d2a26}
+.gapx{flex:1}
+.bhint{position:absolute;left:16px;bottom:22px;right:16px;font-family:Georgia,serif;font-style:italic;font-size:15px;color:rgba(230,240,232,.28);pointer-events:none;z-index:1}
+#ink{display:block;flex:1;min-height:0;width:100%;margin-bottom:12px;touch-action:none;cursor:crosshair;position:relative;z-index:1}
+
+.bottom{position:absolute;left:0;right:0;bottom:0;height:58px;display:flex;align-items:center;gap:8px;padding:0 20px;background:var(--ink)}
+.bottom .btn{background:transparent;color:#e8e8e8;border-color:#4b5262}
+.bottom .btn.main{background:var(--yellow);color:#1d2430;border-color:var(--yellow)}
+.dots{display:flex;gap:3px;margin:0 6px}
+.dot{width:30px;height:30px;border-radius:4px;border:1px solid #4b5262;background:transparent;color:#aab;font-size:12.5px;cursor:pointer;padding:0}
+.dot.on{background:var(--yellow);color:#1d2430;border-color:var(--yellow);font-weight:700}
+.dot.gm{border-color:var(--red)}
+.cnt{margin-left:auto;color:#cfd3dc;font:15px Georgia,serif}
+.toast{position:absolute;left:50%;top:66px;transform:translate(-50%,-10px);background:var(--ink);color:#fff;padding:10px 18px;border-radius:5px;opacity:0;transition:.25s;pointer-events:none;z-index:20;font-size:18px}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+.aop{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.aop button{font:inherit;font-size:17px;line-height:1.3;text-align:left;padding:10px 12px;border-radius:5px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+.aop button b{display:inline-block;min-width:26px;font-family:Georgia,serif;color:var(--blue)}
+.aop button:disabled{opacity:.45;cursor:default}
+.aop button.ok,.aop button.no{opacity:1!important} .aop button.ok{border-color:var(--green);background:#e6f3ea} .aop button.no{border-color:var(--red);background:#f8e8e4}
+.stage.noboard .duo.astro>.pa{flex:1.6} .stage.noboard .duo.astro .sit{display:none} .stage.noboard .duo.astro .aop{grid-template-columns:1fr}
+#asMsg{font-size:18px;line-height:1.45;min-height:54px}
+
+.ptabs{display:flex;gap:8px;align-items:stretch}
+.ptab{flex:1;font:700 19px "Segoe UI";padding:8px 12px;border-radius:6px;border:3px solid;background:#fff;cursor:pointer;text-align:left;line-height:1.2}
+.ptab small{display:block;font-size:14px;font-weight:500;opacity:.9}
+.ptab.on{color:#fff!important}
+.pttmw{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:6px;padding:4px 8px}
+.pttm{font:700 40px/1 Consolas,monospace;min-width:118px;text-align:center}
+.pttm.low{color:var(--red)}
+#ptTab td.ok{background:#e6f3ea} #ptTab td.no{background:#f8e8e4}
+#ptTab input{width:96px}
+#ptCtl{display:flex;flex-direction:column;gap:8px}
+.wb,canvas.lab{touch-action:none}
+.duo.ptd{flex-direction:row;align-items:flex-start;gap:18px} .duo.ptd>.pa{flex:1.15} .duo.ptd>.pb{flex:1}
+
+.c3d{display:block;width:640px;height:430px;border-radius:6px;border:1px solid var(--line);cursor:grab;touch-action:none;background:#1d2a26}
+.hud{display:grid;grid-template-columns:auto auto auto auto;gap:4px 14px;font-size:17px;align-items:center;background:#1e2a22;color:#e9f3ec;border-radius:6px;padding:8px 12px;font-family:"Segoe UI"}
+.hud b{font:700 20px Consolas,monospace;color:#8ff0a4} .hud .q{color:#f6d77a}
+.hud .h{font-size:12px;letter-spacing:1px;text-transform:uppercase;opacity:.7}
+.rule{border-left:6px solid var(--brass);background:#fff8e6;border-radius:4px;padding:8px 12px;font-size:17px;line-height:1.45}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 4px;line-height:1.1}
+.frac>span:first-child{border-bottom:2px solid currentColor;padding:0 4px}
+.ikst{font:17px/1.55 Georgia,serif;margin-top:6px}
+.rule .f{font:700 24px Georgia,serif;color:var(--blue)}
+
+.gtab{max-height:100%}
+#ptTab td.ok{background:#e6f3ea}
+.objs .btn.on{background:var(--ink);color:#fff}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="top"><span class="sign">V</span><span class="lesson">Физика · 7-сынып</span><span class="sep"></span><span class="stitle" id="stitle"></span>
+    <div class="gchips" id="gchips"></div></div>
+  <div class="mainw">
+    <div class="leftw" id="slides">
+
+<!-- 1 -->
+<section class="slide" data-title="Кіріспе" data-hint="7 «А» – 06.11.2026 · 7 «Ә», «В» – 04.11.2026 · Тақырып: Дұрыс және дұрыс емес пішінді денелердің көлемін өлшеу">
+  <h2 class="st" style="font-size:44px;line-height:1.1;margin-top:8px"><small>Тығыздық бөлімі · 18-сабақ · §11</small>Дұрыс және дұрыс емес пішінді<br>денелердің көлемін өлшеу</h2>
+  <div class="duo"><div class="pa">
+  <p class="lead" style="color:var(--muted)">Сызғыш пен өлшеуіш цилиндр (мензурка) көмегімен әртүрлі пішіндегі қатты дененің және сұйықтың көлемін анықтаймыз</p>
+  </div><div class="pb">
+  <canvas class="lab" id="cTitle" width="840" height="400"></canvas>
+  <div style="font-size:15px;color:var(--muted)">«Тайтөбе ауылының жалпы орта білім беретін мектебі» КММ · 7 «А», «Ә», «В» · мұғалім Төленді И.Н.</div>
+</div></div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-title="Сабақтың мақсаты" data-hint="Оқу мақсаты 7.2.2.12">
+  <h2 class="st"><small>Оқу мақсаты 7.2.2.12</small>Бүгін не үйренеміз?</h2>
+  <div class="duo"><div class="pa">
+  <p class="lead">Әртүрлі пішіндегі қатты дененің немесе сұйықтың көлемін өлшеу үшін өлшеуіш цилиндрді (мензурка) қолдану.</p>
+  <div class="card" style="border-left:6px solid #4f8a6e"><h3>Барлық оқушылар</h3><div style="font-size:18px">дұрыс пішінді дененің көлемін V = abc формуласымен есептейді, мензурканың бөлік құнын анықтайды.</div></div>
+  <div class="card" style="border-left:6px solid #c79a3a"><h3>Көптеген оқушылар</h3><div style="font-size:18px">дұрыс емес пішінді дененің көлемін ығыстыру әдісімен (мензурка, құйғыш ыдыс) өлшейді.</div></div>
+  <div class="card" style="border-left:6px solid #b8442f"><h3>Кейбір оқушылар</h3><div style="font-size:18px">көлем бірліктерін (мл, см³, л, м³) өзара түрлендіреді және өлшеу дәлдігін бағалайды.</div></div>
+  </div><div class="pb">
+  <div class="card"><h3>Бағалау критерийлері</h3>
+    <ul class="pl" style="font-size:17.5px;line-height:1.55"><li>бөлік құнын анықтайды;</li><li>V = abc бойынша есептейді;</li><li>ығыстыру әдісін қолданады;</li><li>нәтижені см³ және м³-пен жазады.</li></ul></div>
+  <div class="card"><h3>Тірек ұғымдар</h3><div style="font-size:18px">көлем · өлшеуіш цилиндр · шкаланың бөлік құны</div></div>
+</div></div>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-title="Топқа бөлінейік" data-hint="Әр оқушы экранға шығып, карточканы басады">
+  <h2 class="st"><small>Ұйымдастыру</small>Түсіңді тап – тобыңды тап!</h2>
+  <div class="gdiv">
+    <div class="col">
+      <div class="gcard" id="gCard"><div><div class="q">?</div><div class="tx">Басып көр!</div></div></div>
+      <div class="row" style="align-items:center;font-size:16px">Оқушы саны: <input id="gN" type="number" min="3" max="40" style="font:inherit;width:70px;padding:4px 6px"> <button class="btn" id="gReset">↺ Жаңадан бөлу</button></div>
+      <div id="gWho" style="font-size:16px;color:var(--muted)"></div>
+    </div>
+    <div class="col">
+      <div class="gcols" id="gCols"></div>
+      <div class="tip">Әр топ – бір «станция»: <b style="color:var(--g0)">Қызыл</b> – сызғыш және мензурка, <b style="color:var(--g1)">Жасыл</b> – ығыстыру әдісі, <b style="color:var(--g2)">Көк</b> – құйғыш ыдыс. Топ ұпайы жоғарғы жолақта.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-title="Үй тапсырмасы: миға шабуыл" data-hint="Өткен тақырып: масса, таразылар, ХБЖ, бөлік құны">
+  <h2 class="st"><small>Үй тапсырмасын тексеру · өткенді қайталау</small>Миға шабуыл</h2>
+  <p class="lead">Нөмірді таңда → сұрақ ашылады → топ жауап береді → тағы бір басу – дұрыс жауап. Дұрыс жауапқа топқа <b>+1</b> (жоғарғы жолақтан).</p>
+  <div class="bgrid" id="bGrid"></div>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-title="Проблема: патшаның тәжі" data-hint="Тәждің көлемін сызғышпен өлшей аламыз ба? Болжам → тексер">
+  <h2 class="st"><small>Проблемалық жағдаят · Архимед туралы аңыз</small>Тәждің көлемін қалай өлшейміз?</h2>
+  <div class="duo astro"><div class="pa">
+  <canvas class="lab" id="cAr" width="840" height="400"></canvas>
+  <div class="row"><button class="btn" id="arPlay">▶ Бастау</button><button class="btn" id="arRe">↺ Басынан</button></div>
+  <div class="card" id="asMsg">Алдымен оқиғаны көрейік: <b>▶ Бастау</b>.</div>
+  </div><div class="pb">
+  <div class="card sit"><h3>Жағдаят</h3><div style="font-size:18px;line-height:1.5">Патша зергерге алтын беріп, <b>тәж</b> соқтырды. Зергер алтынның бір бөлігін жасырып қалды ма? Ол үшін тәждің <b>көлемін</b> білу керек. Патша Архимедке: <b>«Тәжді бұзуға болмайды!»</b> – дейді.</div></div>
+  <div class="aop" id="arOpts">
+    <button data-k="ruler"><b>А</b> Сызғышпен өлшеп, V = abc формуласымен есептейді</button>
+    <button data-k="melt"><b>Ә</b> Тәжді балқытып, текше құяды да, қырын өлшейді</button>
+    <button data-k="water"><b>Б</b> Суға батырып, көтерілген судың көлемін өлшейді</button>
+    <button data-k="scale"><b>В</b> Таразыға тартады</button>
+  </div>
+</div></div>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-title="Көлем деген не?" data-hint="V – көлем, [V] = 1 м³ · 1 л = 1 дм³ = 1000 см³ · 1 мл = 1 см³ · 1 м³ = 1000 л = 10⁶ см³">
+  <h2 class="st"><small>Жаңа ұғым</small>Көлем</h2>
+  <div class="duo"><div class="pa">
+  <p class="lead"><b>Көлем</b> – дене немесе зат алатын кеңістіктің сандық сипаттамасы. Белгіленуі <b>V</b> (лат. <i>volume</i> – көлем, толтыру). Ыдыстың ішкі кеңістігінің көлемін <b>сыйымдылық</b> дейміз.</p>
+  <div class="fbox"><span class="big">V</span> — көлем, &nbsp;ХБЖ бірлігі: <b>1 м³</b><br>1 мл = 1 см³ &nbsp;·&nbsp; 1 л = 1 дм³ = 1000 см³ &nbsp;·&nbsp; 1 м³ = 1000 л = 10<sup>6</sup> см³</div>
+  <div class="rule"><b>Аддитивтілік:</b> кез келген дененің көлемі оның бөліктері көлемінің қосындысына тең.</div>
+  </div><div class="pb">
+  <canvas class="lab" id="cVol" width="840" height="240"></canvas>
+  <div class="card"><h3>Бірлікке айналдыр</h3>
+    <div class="chk"><input id="cvV" value="250"><select id="cvU" class="btn"><option value="1">м³</option><option value="0.001">дм³ (л)</option><option value="0.000001" selected>см³ (мл)</option></select>
+    <span id="cvOut" style="font:20px 'Times New Roman',serif"></span></div></div>
+</div></div>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-title="Өлшеуіш құрал және шкала" data-hint="Б.Қ. = (90 − 80) : 10 = 1 мл · V = 72 мл · ΔV = 1 : 2 = 0,5 мл · V = (72 ± 0,5) мл">
+  <h2 class="st"><small>Жаңа ұғым · 11.1 және 11.2-суреттер</small>Шкала және бөлік құны</h2>
+  <div class="duo"><div class="pa">
+  <canvas class="lab" id="cScale" width="840" height="380"></canvas>
+  <div class="objs" id="scBtns"></div>
+  </div><div class="pb">
+  <div class="card status" id="scDef" style="font-size:18px"></div>
+  <div class="card"><h3>Мензурка бойынша (11.2-сурет)</h3>
+    <table class="t"><tr><td class="l">Бөлік құны</td><td class="l">Б.Қ. = (90 − 80) : 10 = <b>1 мл</b></td></tr>
+    <tr><td class="l">Сұйықтың көлемі</td><td class="l">V = <b>72 мл</b></td></tr>
+    <tr><td class="l">Өлшеу қателігі</td><td class="l">ΔV = 1 : 2 = <b>0,5 мл</b></td></tr>
+    <tr><td class="l">Жауапты жазу</td><td class="l">V = <b>(72 ± 0,5) мл</b></td></tr></table></div>
+  <div class="tip"><b>Дұрыс оқу:</b> көзді сұйық деңгейімен бір сызыққа қой. Деңгейді сұйық бетінің ойысының (мениск) төменгі нүктесінен оқы.</div>
+</div></div>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-title="Мензурканы оқу" data-hint="Б.Қ. = (a − b) : n · ΔV = Б.Қ. : 2 · V = (… ± ΔV) мл">
+  <h2 class="st"><small>Виртуалды зертхана · 1</small>Сұйықтың көлемін мензуркамен өлшеу</h2>
+  <div class="duo"><div class="pa">
+  <canvas class="lab" id="cMz" width="840" height="360"></canvas>
+  <div class="row" style="align-items:center;flex-wrap:wrap"><div class="objs" id="mzC"></div>
+    <div class="ctl grow" style="min-width:220px"><div class="lab"><span>Су құю</span><span class="val" id="mzVv"></span></div><input type="range" id="mzV" min="0" max="100" step="1" value="72"></div>
+    <button class="btn" id="mzRnd">🎲 Кездейсоқ деңгей</button></div>
+  </div><div class="pb">
+  <div class="card fsq">
+    <span>1) Бөлік құны: Б.Қ. =</span><span><input id="mzA"> мл</span>
+    <span>2) Сұйықтың көлемі: V =</span><span><input id="mzB"> мл</span>
+    <span>3) Өлшеу қателігі: ΔV =</span><span><input id="mzD"> мл</span>
+    <span></span><span><button class="btn main" id="mzChk">Тексеру</button></span>
+  </div>
+  <div class="card status" id="mzRes">Цилиндрді таңда, шкаланы оқы да, жауабыңды жаз.</div>
+  <div class="rule">Ойлан: бір су үш цилиндрде өлшенсе, қайсысының нәтижесі ең дәл болады? <b>Бөлік құны кіші болған сайын өлшеу дәлірек.</b></div>
+</div></div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-title="Дұрыс пішінді денелер" data-hint="Текше: V = a³ · Параллелепипед: V = abc · Сызғышпен ұзындығын, енін, биіктігін өлшейміз">
+  <h2 class="st"><small>Виртуалды зертхана · 2 · 11.1-кесте</small>Дұрыс пішінді дененің көлемі</h2>
+  <div class="duo"><div class="pa">
+  <canvas class="lab" id="cCubes" width="840" height="350"></canvas>
+  <div class="row" style="flex-wrap:wrap">
+    <div class="ctl grow" style="min-width:150px"><div class="lab"><span>a (ұзындығы)</span><span class="val" id="cuAv"></span></div><input type="range" id="cuA" min="1" max="6" step="1" value="4"></div>
+    <div class="ctl grow" style="min-width:150px"><div class="lab"><span>b (ені)</span><span class="val" id="cuBv"></span></div><input type="range" id="cuB" min="1" max="6" step="1" value="3"></div>
+    <div class="ctl grow" style="min-width:150px"><div class="lab"><span>c (биіктігі)</span><span class="val" id="cuCv"></span></div><input type="range" id="cuC" min="1" max="6" step="1" value="2"></div>
+  </div>
+  <div class="row"><button class="btn main" id="cuGo">▶ 1 см³-тік кубиктен құрастыр</button><button class="btn" id="cuCube">Текше: a = b = c</button></div>
+  </div><div class="pb">
+  <div class="row">
+    <div class="card grow"><h3>Текше</h3><div class="fbox" style="border-left-width:0;padding:4px 8px"><span class="big">V = a³</span></div></div>
+    <div class="card grow"><h3>Тікбұрышты параллелепипед</h3><div class="fbox" style="border-left-width:0;padding:4px 8px"><span class="big">V = abc</span></div></div>
+  </div>
+  <div class="card status" id="cuMsg"></div>
+  <div class="card"><h3>Өзің есепте</h3><div class="chk">V = <input id="cuV"> см³ = <input id="cuVm" style="width:130px"> м³ <button class="btn main" id="cuChk">Тексеру</button><span id="cuRes"></span></div>
+    <div style="font-size:14px;color:var(--muted);margin-top:4px">10 дәрежесін <b>2·10^-5</b> түрінде жазуға болады. 1 см³ = 10⁻⁶ м³.</div></div>
+  <div class="tip"><b>Әдіс:</b> сызғышпен ұзындығын, енін және биіктігін өлшеп (текшеде олар тең), формула бойынша есептейміз.</div>
+</div></div>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-title="Дұрыс емес пішінді денелер" data-hint="Ығыстыру әдісі: V = V₂ − V₁ · Суретте: Б.Қ. = 5 мл, V₁ = 50 мл, V₂ = 70 мл → V = 20 см³">
+  <h2 class="st"><small>Виртуалды зертхана · 3 · ығыстыру әдісі</small>Дұрыс емес пішінді дененің көлемі</h2>
+  <div class="duo"><div class="pa">
+  <canvas class="lab" id="cDip" width="840" height="360"></canvas>
+  <div class="objs" id="dipO"></div>
+  <div class="row" style="align-items:center;flex-wrap:wrap"><button class="btn main" id="dipIn">⬇ Батыру</button><button class="btn" id="dipOut">⬆ Шығару</button>
+    <div class="ctl grow" style="min-width:220px"><div class="lab"><span>Алғашқы су, V₁</span><span class="val" id="dipV1v"></span></div><input type="range" id="dipV1" min="30" max="70" step="1" value="50"></div></div>
+  </div><div class="pb">
+  <div class="rule"><span class="f">V = V₂ − V₁</span><br>Мензуркаға су құйып, көлемін <b>V₁</b> деп белгілейміз. Денені батырғанда көтерілген су деңгейі – <b>V₂</b>. Айырмасы дененің көлемін береді.</div>
+  <div class="card fsq">
+    <span>1) Алғашқы су: V₁ =</span><span><input id="dipA"> мл</span>
+    <span>2) Денені батырғанда: V₂ =</span><span><input id="dipB"> мл</span>
+    <span>3) Дененің көлемі: V =</span><span><input id="dipC"> см³</span>
+    <span></span><span><button class="btn main" id="dipChk">Тексеру</button> <span id="dipRes"></span></span>
+  </div>
+  <div class="warn"><b>Ереже:</b> денені жіпке байлап, <b>ақырын</b> түсіреміз: тасты лақтырсаң, су шашырайды, шыны сынуы мүмкін. Дене суға <b>толық</b> батуы керек.</div>
+</div></div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-title="Топтық тапсырма" data-hint="Әр топ өз тапсырмасын орындайды: дұрыс жауап – топқа +2">
+  <h2 class="st"><small>Топтық жұмыс</small>Әр топқа – бір өлшеу тәсілі</h2>
+  <div class="row" id="gtRow"></div>
+  <div class="tip">Топ ішінде: біреуі есептейді, біреуі тексереді, біреуі жауапты экранға енгізеді. Әр топқа 2 мүмкіндік.</div>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-title="Өмірмен байланыс" data-hint="1 галлон ≈ 3,8 л · 1 баррель ≈ 159 л · Сауда өлшеуіштері тексеруден өтеді">
+  <h2 class="st"><small>Өмірмен байланыс</small>Көлем – күнделікті өмірде</h2>
+  <div class="duo"><div class="pa">
+  <canvas class="lab" id="cLife" width="840" height="230"></canvas>
+  <div class="card" style="font-size:17.5px;line-height:1.5"><h3>Жүйеден тыс бірліктер</h3>Әртүрлі елдерде сұйық және сусымалы заттар үшін басқа бірліктер де қолданылады: <b>галлон</b> (АҚШ-та ≈ 3,8 л), <b>баррель</b> (мұнай үшін ≈ 159 л).</div>
+  </div><div class="pb">
+  <div class="card" style="border-left:6px solid var(--blue)"><h3>ҚР «Өлшем бірлігін қамтамасыз ету туралы» Заңы</h3>
+    <div style="font-size:17.5px;line-height:1.5">Жанармай құю колонкалары, дәріхана мен зертхананың өлшеуіш ыдыстары белгілі мерзім сайын <b>салыстырып тексеруден (поверка)</b> өтеді. Бұл – <b>тұтынушының құқығын қорғау</b>.</div></div>
+  <div class="row">
+    <div class="card grow"><h3>Ойлан</h3><div style="font-size:17px;line-height:1.5">Колонка <b>40 л</b> көрсетті, ал тексерілген өлшеуіш ыдыста бар болғаны <b>38 л</b> шықты. Жүргізуші қанша литр бензинді алмады? Бұл кімнің құқығын бұзады?</div></div>
+    <div class="card grow" style="border-left:5px solid var(--red)"><h3 style="color:var(--red)">Кабинеттегі қауіпсіздік</h3>
+      <ul class="pl" style="font-size:16px;line-height:1.5"><li>мензурка – шыны: үстел шетіне қоймаймыз;</li><li>денені жіппен ақырын түсіреміз;</li><li>төгілген суды бірден сүртеміз;</li><li>ыстық сұйықты шынаға кенет құймаймыз.</li></ul></div>
+  </div>
+</div></div>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-wide="1" data-title="Зерттеу: виртуалды станциялар" data-hint="Әр топ кезекпен тақтаға шығып, өз станциясын орындайды · 3 минут">
+  <h2 class="st"><small>Зерттеу · виртуалды станциялар</small>Денелердің көлемін анықтау</h2>
+  <div class="ptabs"><div class="ptabs grow" id="ptTabs"></div>
+    <div class="pttmw"><span class="pttm" id="ptTm">03:00</span><button class="btn main" id="ptGo">▶</button><button class="btn" id="ptRe" title="Таймерді қайта қосу">↺</button><button class="btn" id="ptClr" title="Осы топтың нәтижесін өшіру">🗑</button></div></div>
+  <div class="duo ptd"><div class="pa">
+  <canvas class="lab" id="cSt" width="840" height="360"></canvas>
+  <div id="ptCtl"></div>
+  </div><div class="pb">
+  <div class="card"><h3 id="ptTH">Тапсырма</h3><div id="ptTask" style="font-size:16.5px;line-height:1.45"></div></div>
+  <table class="t" id="ptTab"></table>
+  <div class="row" style="align-items:center;flex-wrap:wrap"><button class="btn main" id="ptChk">Тексеру</button><span id="ptRes" style="font-size:17px"></span></div>
+</div></div>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-title="Нәтижелерді салыстырайық" data-hint="Бөлік құны кіші – өлшеу дәлірек. Әдісті дененің пішіні мен өлшеміне қарай таңдаймыз">
+  <h2 class="st"><small>Зерттеу · қорытынды</small>Топтардың нәтижесі</h2>
+  <table class="t" id="rsTab"></table>
+  <div class="row">
+    <div class="card grow" style="font-size:17px;line-height:1.5"><h3>Қай әдіс қашан?</h3><b>Сызғыш</b> – дұрыс пішінді дене.<br><b>Мензурка</b> – мензуркаға сиятын кез келген батпайтын дене.<br><b>Құйғыш ыдыс</b> – мензуркаға сыймайтын дене.</div>
+    <div class="tip grow"><b>Ойлан:</b> ағаш білеушенің көлемі сызғышпен де, мензуркамен де бірдей шықты ма? Неге білеушені инемен батырдық? Ине батырмасаң, V₂ неше болар еді?</div>
+  </div>
+</section>
+
+<!-- 15 -->
+<section class="slide nofit" data-title="Сергіту сәті: ХБЖ дуэлі" data-wide="1">
+  <div class="duel" id="duel">
+    <div class="side A" id="sideA">
+      <div class="whoq"><input id="nmA" value="1-оқушы"><span class="sc2" id="scA">0</span></div>
+      <div class="pbar"><i id="pbA"></i></div>
+      <div class="qq2" id="qA">Дайынсың ба?</div>
+      <div class="opts" id="oA"></div>
+      <div class="stat"><span id="stA"></span><span id="tA"></span></div>
+    </div>
+    <div class="mid">
+      <div class="lbl">Сергіту сәті</div>
+      <div style="font:700 22px Georgia,serif">ХБЖ<br>дуэлі</div>
+      <div class="lbl">уақыт</div><div class="clock" id="dClock">0,0 с</div>
+      <button class="btn main" id="dGo">▶ Бастау</button>
+      <button class="btn" id="dRe" style="color:#fff;background:transparent;border-color:#4b5262">↺ Жаңа сұрақтар</button>
+      <div style="font-size:12.5px;opacity:.7;line-height:1.4">Әркім өз жартысында ғана басады. 10 сұрақ.</div>
+    </div>
+    <div class="side B" id="sideB">
+      <div class="whoq"><input id="nmB" value="2-оқушы"><span class="sc2" id="scB">0</span></div>
+      <div class="pbar"><i id="pbB"></i></div>
+      <div class="qq2" id="qB">Дайынсың ба?</div>
+      <div class="opts" id="oB"></div>
+      <div class="stat"><span id="stB"></span><span id="tB"></span></div>
+    </div>
+    <div class="overlay" id="dOver" style="display:none"><div class="box"><h3 id="dWin"></h3><p id="dTxt"></p><button class="btn main" id="dOk">Жақсы!</button></div></div>
+  </div>
+</section>
+
+<!-- 16 -->
+<section class="slide" data-wide="1" data-title="ФС: аквариум" data-hint="V = abc · 1 л = 1000 см³ · V тас = a · b · Δh">
+  <h2 class="st"><small>Функционалдық сауаттылық · 3D зертхана</small>Аквариум: су төгіліп кетпей ме?</h2>
+  <div class="row">
+    <div class="col"><canvas id="aq3d" class="c3d" width="640" height="430"></canvas>
+      <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap"><button class="btn main" id="aqGo">Декор тасты салу</button><button class="btn" id="aqZoom">🔍 Шкаланы жақындату</button><button class="btn" id="aqRe">↺ Қайта</button></div>
+      <div class="hud" style="grid-template-columns:auto auto auto auto"><span class="h">Аквариум</span><span class="h">ұзындығы a</span><span class="h">ені b</span><span class="h">биіктігі c</span>
+        <span>өлшемдері</span><b>50 см</b><b>30 см</b><b>30 см</b></div></div>
+    <div class="col grow">
+      <div class="card" style="font-size:17px;line-height:1.5"><h3>Жағдаят</h3>Дина балық сатып алды. Аквариумға <b>20 см</b> биіктікке дейін су құйылған. Дүкеннен бірдей <b>декор тастар</b> алды. Салмас бұрын ойланды: «Су төгіліп кетпей ме?» Шкаладан су деңгейін оқып, есептеп бер.</div>
+      <div class="card fsq">
+        <span>1) Аквариум сыйымдылығы: V =</span><span><input id="aqA"> л</span>
+        <span>2) Құйылған су (h = 20 см): V =</span><span><input id="aqB"> л</span>
+        <span>3) Бір тасты салғанда h =</span><span><input id="aqC"> см</span>
+        <span>4) Бір тастың көлемі: V<sub>т</sub> =</span><span><input id="aqD"> л</span>
+        <span>5) Бір тас салынған соң тағы неше литр көлем бос?</span><span><input id="aqE"> л</span>
+        <span></span><span><button class="btn main" id="aqChk">Тексеру</button> <span id="aqRes"></span></span>
+      </div>
+      <div class="tip"><b>Тексеріп көр:</b> тасты бірінен соң бірін салсаң, неше тас сыяды? Тағы бірін салсаң, не болады?</div>
+    </div>
+  </div>
+</section>
+
+<!-- 17 -->
+<section class="slide" data-wide="1" data-title="ФС: Архимед пен тәж" data-hint="Құйғыш ыдыс: төгілген судың көлемі = дененің көлемі">
+  <h2 class="st"><small>Функционалдық сауаттылық · 3D зертхана</small>Зергер алдады ма? Құйғыш ыдыс</h2>
+  <div class="row">
+    <div class="col"><canvas id="cr3d" class="c3d" width="640" height="430"></canvas>
+      <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap"><button class="btn on" id="crB0">👑 Тәж</button><button class="btn" id="crB1">🟨 Алтын кесегі</button><button class="btn main" id="crGo">⬇ Батыру</button><button class="btn" id="crZoom">🔍 Мензурка</button></div></div>
+    <div class="col grow">
+      <div class="card" style="font-size:17px;line-height:1.5"><h3>Жағдаят</h3>Тәж мен алтын кесегінің <b>массасы бірдей</b> – 1 кг. Екеуі де мензуркаға сыймайды. Архимед <b>құйғыш ыдысты</b> сумен шүмегіне дейін толтырып, денені батырады да, ағып шыққан суды мензуркаға жинайды.</div>
+      <div class="rule">Ағып шыққан судың көлемі <b>дененің көлеміне</b> тең.</div>
+      <div class="card fsq">
+        <span>1) Тәждің көлемі: V<sub>т</sub> =</span><span><input id="crA"> см³</span>
+        <span>2) Алтын кесегінің көлемі: V<sub>а</sub> =</span><span><input id="crB"> см³</span>
+        <span>3) Айырмасы: ΔV =</span><span><input id="crC"> см³</span>
+        <span></span><span><button class="btn main" id="crChk">Тексеру</button> <span id="crRes"></span></span>
+      </div>
+      <div class="card" style="font-size:17px"><b>4) Зергер алдады ма?</b> <button class="btn" data-cq="1">Иә</button> <button class="btn" data-cq="0">Жоқ</button> <div id="crQ" style="margin-top:6px"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 18 -->
+<section class="slide" data-title="Жеке жұмыс" data-hint="A – 3 балл, B – 2 балл, C – 2 балл. Барлығы 7 балл">
+  <h2 class="st"><small>Деңгейлік тапсырмалар · 7 балл</small>Жеке жұмыс</h2>
+  <div class="duo"><div class="pa">
+  <div class="who">Оқушы: <select id="tkWho"></select><button class="btn" id="tkPrev">◀</button><button class="btn" id="tkNext">▶</button><span class="score" id="tkScore"></span></div>
+  <canvas class="lab" id="cTaskB" width="840" height="210"></canvas>
+  <div class="tq"><div class="lv lvA">A</div><div class="qt">Суретті пайдаланып, жауап бер (әрқайсысы 1 балл).</div>
+    <div class="ans"><div class="ai">Бөлік құны = <input data-q="A1"> мл <span class="r"></span></div><div class="ai">Тастың көлемі = <input data-q="A2"> см³ <span class="r"></span></div><div class="ai">1,5 л = <input data-q="A3"> см³ <span class="r"></span></div></div></div>
+  </div><div class="pb">
+  <div class="tq"><div class="lv lvB">B</div><div class="qt">Өлшемдері <b>5 см × 4 см × 10 см</b> кірпіштің көлемі қанша? (2 балл)</div>
+    <div class="ans"><div class="ai">V = <input data-q="B1"> см³ <span class="r"></span></div><div class="ai">V = <input data-q="B2"> м³ <span class="r"></span></div></div></div>
+  <div class="tq"><div class="lv lvC">C</div><div class="qt"><b>2 л</b> бөтелкеге <b>5 см³</b>-тік бірдей неше шарик сыяды (шарлардың арасы ескерілмейді)? (2 балл)</div>
+    <div class="ans"><div class="ai">N = <input data-q="C1"> дана <span class="r"></span></div></div></div>
+  <div class="tip" style="font-size:15px">Жауапты жазып, <b>Enter</b> немесе <b>✓</b> бас. Әр сұраққа 2 мүмкіндік: бірінші реттен дұрыс – толық балл, екінші реттен – жартысы. 10 дәрежесін <b>2·10^-4</b> түрінде жаз.</div>
+</div></div>
+</section>
+
+<!-- 19 -->
+<section class="slide nofit" data-title="Бағалау парағы" data-wide="1">
+  <h2 class="st"><small>Жеке жұмыс нәтижесі</small>Кім қанша балл жинады?</h2>
+  <div class="gwrap">
+    <div class="gtab"><table class="t" id="grTab"></table></div>
+    <div class="col">
+      <div class="sum"><div style="border-top:5px solid var(--green)"><b id="g1">0</b>6–7 балл</div><div style="border-top:5px solid var(--yellow)"><b id="g2">0</b>4–5 балл</div><div style="border-top:5px solid var(--red)"><b id="g3">0</b>0–3 балл</div></div>
+      <div class="card col" style="flex:1;min-height:0"><h3>Сынып тізімі (әр жолға бір оқушы)</h3>
+        <textarea class="roster" id="roster" spellcheck="false"></textarea>
+        <div style="display:flex;gap:6px"><button class="btn main" id="rsSave">Тізімді сақтау</button><button class="btn" id="grClr">Нәтижелерді тазалау</button></div></div>
+      <div style="font-size:13.5px;color:var(--muted)">Баға: 6–7 балл – «5», 4–5,5 – «4», 2–3,5 – «3», 0–1,5 – «2».</div>
+    </div>
+  </div>
+</section>
+
+<!-- 20 -->
+<section class="slide" data-title="Рефлексия" data-hint="3 жаңа ұғым · 2 мысал · 1 сұрақ">
+  <h2 class="st"><small>Рефлексия · «3–2–1»</small>Сабақтан не алдық?</h2>
+  <div class="duo"><div class="pa">
+  <div class="card" style="font-size:19px;line-height:1.7"><b>Стикерге жаз:</b><br><b>3</b> – жаңа ұғым;<br><b>2</b> – көлемді өлшеуге болатын мысал;<br><b>1</b> – әлі де қойғым келетін сұрақ.</div>
+  </div><div class="pb">
+  <div class="lights">
+    <div class="lt"><div class="c" style="background:#2e7d4f" data-l="0">0</div><div class="tx">Түсіндім, өзім өлшей аламын</div><button class="btn mn" data-m="0">−1</button></div>
+    <div class="lt"><div class="c" style="background:#e0a92e" data-l="1">0</div><div class="tx">Түсіндім, бірақ сұрағым бар</div><button class="btn mn" data-m="1">−1</button></div>
+    <div class="lt"><div class="c" style="background:#b8442f" data-l="2">0</div><div class="tx">Көмек керек</div><button class="btn mn" data-m="2">−1</button></div>
+  </div>
+  <div class="bar" id="lBar"><i style="background:#2e7d4f"></i><i style="background:#e0a92e"></i><i style="background:#b8442f"></i></div>
+  <div style="display:flex;justify-content:space-between;font-size:14px;color:var(--muted)"><span>Стикерді жапсырған сайын шеңберді бір рет бас.</span><button class="btn" id="lClr" style="font-size:13px;padding:3px 10px">↺ Нөлдеу</button></div>
+</div></div>
+</section>
+
+<!-- 21 -->
+<section class="slide" data-title="Қорытынды және үй тапсырмасы" data-hint="Бүгін не білдім?">
+  <h2 class="st"><small>Қорытынды</small>Есте сақтайық</h2>
+  <div class="duo"><div class="pa">
+  <div class="row">
+    <div class="card grow"><h3>Дұрыс пішінді</h3><div style="font-size:17px;line-height:1.5">сызғышпен өлшейміз:<br><b>V = a³</b>, &nbsp;<b>V = abc</b></div></div>
+    <div class="card grow"><h3>Дұрыс емес пішінді</h3><div style="font-size:17px;line-height:1.5">ығыстыру әдісі:<br><b>V = V₂ − V₁</b></div></div>
+    <div class="card grow"><h3>Сыймайтын дене</h3><div style="font-size:17px;line-height:1.5">құйғыш ыдыс: ағып шыққан судың көлемі</div></div>
+  </div>
+  <div class="fbox" style="font-size:20px">1 мл = 1 см³ &nbsp;·&nbsp; 1 л = 1 дм³ = 1000 см³ &nbsp;·&nbsp; 1 м³ = 1000 л = 10<sup>6</sup> см³</div>
+  </div><div class="pb">
+  <div class="card"><h3>Үй тапсырмасы</h3>
+    <ol style="margin:0;padding-left:22px;font-size:18px;line-height:1.65">
+      <li>Оқулықтағы §11 тақырыбын оқу.</li>
+      <li><b>Функционалдық тапсырма:</b> үйде ас қасықтың көлемін мөлшерлі стақанмен (өлшеуіш ыдыспен) анықта: неше ас қасық су 100 мл-ді толтырады? Бір қасықтың көлемі: V = 100 мл : N.</li>
+    </ol></div>
+  <canvas class="lab" id="cEnd" width="840" height="140"></canvas>
+</div></div>
+</section>
+
+    </div>
+    <div class="rightw" id="rightw">
+      <div class="grip" id="grip">⇢ тақтаны жылжыт</div>
+      <div class="board">
+        <div class="tools">
+          <button class="sw on" data-c="#f2efe2" style="background:#f2efe2" title="Бор"></button>
+          <button class="sw" data-c="#ffd75e" style="background:#ffd75e" title="Сары"></button>
+          <button class="sw" data-c="#ff8fa3" style="background:#ff8fa3" title="Қызғылт"></button>
+          <button class="sw" data-c="#7fd8ff" style="background:#7fd8ff" title="Көгілдір"></button>
+          <button class="sw" data-c="#9be37f" style="background:#9be37f" title="Жасыл"></button>
+          <button class="tb" data-w="2.2">жіңішке</button><button class="tb on" data-w="3.6">орташа</button><button class="tb" data-w="6.5">жуан</button>
+          <span class="gapx"></span>
+          <button class="tb" id="erase">⌫ өшір</button><button class="tb" id="undo" title="Ctrl+Z">↶</button><button class="tb" id="wipe">тазалау</button><button class="tb" id="hideB" title="Тақтаны жасыру (T)">✕</button>
+        </div>
+        <div class="bhint" id="bhint"></div>
+        <canvas id="ink"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="btab" id="btab">✎ ТАҚТА</div>
+  <div class="bottom">
+    <button class="btn" id="prev">◀ Артқа</button><div class="dots" id="dots"></div><button class="btn main" id="next">Келесі ▶</button>
+    <span class="cnt" id="cnt"></span><button class="btn" id="snd">🔊</button><button class="btn" id="fs">⛶ Толық экран</button>
+  </div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script src="three.min.js"></script>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const nf=(v,d=4)=>{ if(!isFinite(v)) return '—'; let s=String(+v.toFixed(d)); if(s.includes('e')) return s; return s.replace('.',','); };
+const g1=v=>(Math.round(v*10)/10).toFixed(1).replace('.',',');
+let toastT; function toast(m){ const t=$('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2600); }
+const store={ get(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } }, set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} } };
+function parseNum(s){ s=String(s).trim().replace(/\s/g,'').replace(/,/g,'.').replace(/[×x*]/g,'·').replace(/−/g,'-');
+  if(s==='') return NaN;
+  let m=/^(-?[\d.]+)·10\^?\(?(-?\d+)\)?$/.exec(s); if(m) return Number(m[1])*Math.pow(10,+m[2]);
+  m=/^10\^\(?(-?\d+)\)?$/.exec(s); if(m) return Math.pow(10,+m[1]);
+  return Number(s); }
+const near=(a,b)=>Math.abs(a-b)<=Math.max(1e-9,Math.abs(b)*1e-6);
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+/* ---------- дыбыс ---------- */
+const SND=(()=>{ let ac=null,on=store.get('kl_snd',true);
+  function init(){ if(ac){ if(ac.state==='suspended') ac.resume(); return; } const C=window.AudioContext||window.webkitAudioContext; if(C) ac=new C(); }
+  function tone(f,d,vol=.15,at=0,type='sine'){ if(!ac||!on) return; const t=ac.currentTime+at,o=ac.createOscillator(),g=ac.createGain();
+    o.type=type; o.frequency.value=f; g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+.01); g.gain.exponentialRampToValueAtTime(.0001,t+d); o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+d+.02); }
+  return { init, get on(){return on;}, toggle(){ on=!on; store.set('kl_snd',on); return on; },
+    ok(){ tone(660,.14); tone(990,.25,.15,.11); }, bad(){ tone(190,.3,.08,0,'square'); }, page(){ tone(520,.07,.04); },
+    clink(){ tone(2100,.08,.06); tone(2900,.06,.03,.02); }, beep(){ tone(1046,.12,.12); },
+    spin(){ tone(700+Math.random()*500,.05,.05); },
+    bell(){ [784,988,1175,1568].forEach((f,i)=>tone(f,.35,.14,i*.16)); } };
+})();
+document.addEventListener('pointerdown',()=>SND.init(),{capture:true});
+
+/* ---------- топтар және ұпай ---------- */
+const GR=[{n:'Қызыл',c:'#c8352b'},{n:'Жасыл',c:'#2e7d4f'},{n:'Көк',c:'#1f5fa8'}];
+let GS=store.get('kl_gs',[0,0,0]);
+function gsShow(){ $('gchips').innerHTML=GR.map((g,i)=>`<div class="gchip" style="background:${g.c}" data-g="${i}" title="+1"><span>${g.n}</span><b>${GS[i]}</b><span class="mn" data-m="${i}" title="−1">−</span></div>`).join(''); store.set('kl_gs',GS); }
+$('gchips').addEventListener('click',e=>{ const m=e.target.closest('[data-m]'); if(m){ GS[+m.dataset.m]=Math.max(0,GS[+m.dataset.m]-1); gsShow(); return; }
+  const c=e.target.closest('[data-g]'); if(c){ GS[+c.dataset.g]++; SND.clink(); gsShow(); } });
+function addGS(i,k){ GS[i]+=k; gsShow(); }
+gsShow();
+
+/* ---------- сурет көмекшілері ---------- */
+function rr(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function label(ctx,t,x,y,col='#1d2430',size=13,align='center',bold=false,font='Segoe UI, sans-serif'){ ctx.fillStyle=col; ctx.font=(bold?'700 ':'')+size+'px '+font; ctx.textAlign=align; ctx.fillText(t,x,y); ctx.textAlign='left'; }
+function table_(ctx,w,h,y){ ctx.fillStyle='#b98a5a'; ctx.fillRect(0,y,w,h-y); ctx.fillStyle='#a3774a'; ctx.fillRect(0,y,w,6); ctx.strokeStyle='rgba(0,0,0,.08)'; for(let x=30;x<w;x+=90){ ctx.beginPath(); ctx.moveTo(x,y+10); ctx.lineTo(x+40,h); ctx.stroke(); } }
+
+const LABS={};
+
+/* 3D көмекшілері */
+const SC3D={};
+function c3Base(cv,bg){ const T=THREE; const R=new T.WebGLRenderer({canvas:cv,antialias:true}); R.setPixelRatio(Math.min(2,devicePixelRatio||1)); R.setSize(cv.width,cv.height,false); R.setClearColor(bg);
+  const S=new T.Scene(), C=new T.PerspectiveCamera(38,cv.width/cv.height,.02,200);
+  S.add(new T.HemisphereLight(0xffffff,0x556677,.85)); const dl=new T.DirectionalLight(0xffffff,.65); dl.position.set(3,8,5); S.add(dl); return {T,R,S,C}; }
+function c3Label(T,text,col){ const c=document.createElement('canvas'); c.width=320; c.height=80; const g=c.getContext('2d');
+  g.fillStyle='rgba(255,255,255,.92)'; rr(g,4,4,312,72,18); g.fill(); g.fillStyle=col; g.font='700 40px Segoe UI'; g.textAlign='center'; g.fillText(text,160,55);
+  const sp=new T.Sprite(new T.SpriteMaterial({map:new T.CanvasTexture(c),depthTest:false})); sp.scale.set(.4,.1,1); return sp; }
+function c3Orbit(cv,st){ let d=null; cv.addEventListener('pointerdown',e=>{ d={x:e.clientX,y:e.clientY}; st.auto=false; cv.setPointerCapture(e.pointerId); });
+  cv.addEventListener('pointermove',e=>{ if(!d) return; st.yaw-=(e.clientX-d.x)*.008; st.pitch=Math.max(.12,Math.min(1.35,st.pitch+(e.clientY-d.y)*.006)); d={x:e.clientX,y:e.clientY}; });
+  const up=()=>d=null; cv.addEventListener('pointerup',up); cv.addEventListener('pointercancel',up); }
+function c3Cam(o,st,tgt,dist){ o.C.position.set(tgt.x+Math.sin(st.yaw)*Math.cos(st.pitch)*dist,tgt.y+Math.sin(st.pitch)*dist,tgt.z+Math.cos(st.yaw)*Math.cos(st.pitch)*dist); o.C.lookAt(tgt); }
+const v1=x=>nf(x,1)+' м/с';
+function c3NoThree(cv){ const c=cv.getContext('2d'); if(c){ c.fillStyle='#fff'; c.font='16px Segoe UI'; c.fillText('three.min.js табылмады (осы папкада болуы керек)',14,40); } }
+
+/* 2. Топқа бөлу */
+let GD=store.get('kl_gd',null);
+function gdNew(n){ const bag=[]; for(let i=0;i<n;i++) bag.push(i%3); GD={n,bag:shuffle(bag),list:[]}; store.set('kl_gd',GD); gdShow(); }
+function rosterNames(){ return store.get('kl_roster',null)||store.get('ms_roster',null)||[]; }
+function gdShow(){ $('gN').value=GD.n;
+  const cols=[[],[],[]]; GD.list.forEach(x=>cols[x.c].push(x.name)); const tgt=c=>GD.list.filter(x=>x.c===c).length+GD.bag.filter(x=>x===c).length;
+  $('gCols').innerHTML=GR.map((g,i)=>`<div class="gcol"><h4 style="background:${g.c}"><span>${g.n} топ</span><span>${cols[i].length}/${tgt(i)}</span></h4><ol>${cols[i].map(n=>'<li>'+n+'</li>').join('')}</ol></div>`).join('');
+  const rn=rosterNames(), next=GD.list.length; $('gWho').textContent=GD.bag.length?('Кезек: '+(rn[next]||((next+1)+'-оқушы'))+' · қалды: '+GD.bag.length):'Барлығы топқа бөлінді ✔'; }
+let gdBusy=false;
+$('gCard').addEventListener('pointerdown',e=>{ e.preventDefault(); if(gdBusy) return; const card=$('gCard');
+  if(!GD.bag.length){ toast('Барлық оқушы бөлінді. «Жаңадан бөлу» басыңыз.'); return; }
+  gdBusy=true; setTimeout(()=>gdBusy=false,350);   // қос басудан қорғау ғана – кідіріс жоқ
+  const c=GD.bag.pop(); const rn=rosterNames(); const name=rn[GD.list.length]||((GD.list.length+1)+'-оқушы'); GD.list.push({name,c}); store.set('kl_gd',GD);
+  card.classList.remove('res'); void card.offsetWidth; card.style.background=GR[c].c; card.classList.add('res');
+  card.innerHTML=`<div><div class="q">${GR[c].n} топ!</div><div class="tx">${name} · келесі оқушы – бас!</div></div>`; SND.ok(); gdShow(); });
+$('gReset').onclick=()=>{ const n=Math.max(3,Math.min(40,+$('gN').value||24)); if(GD&&GD.list.length&&!confirm('Топтарға бөлу жаңадан басталады. Жалғастырамыз ба?')) return; gdNew(n); };
+if(!GD){ const rn=rosterNames(); gdNew(rn.length||24); } else gdShow();
+
+/* 4. Миға шабуыл */
+const BQ=[
+  ['Масса дегеніміз не?','Дененің инерттілігінің өлшемі.'],
+  ['Массаның ХБЖ бірлігі қандай?','1 кг.'],
+  ['250 г = ? кг','0,25 кг.'],
+  ['3,5 т = ? кг','3500 кг.'],
+  ['Иінді таразыда дене қай табақшаға қойылады?','Сол табақшаға, ал кір тастар – оң табақшаға.'],
+  ['Электронды таразыдағы TARE батырмасы не істейді?','Ыдыстың массасын «нөлдейді»: таразы тек құйылған заттың массасын көрсетеді.'],
+  ['Аспаптың бөлік құны қалай анықталады?','c = (a − b) / n: көршілес екі цифрланған штрихтың айырмасын бөлік санына бөлеміз.'],
+  ['Бос стақан 120 г, сумен бірге 370 г. Судың массасы?','370 − 120 = 250 г.'],
+  ['Екі дене соқтығысқанда қайсысының жылдамдығы көбірек өзгереді?','Массасы кіші дененің.'],
+];
+$('bGrid').innerHTML=BQ.map((q,i)=>`<div class="bq" data-i="${i}"><div class="n">${i+1}</div><div class="qq">${q[0]}</div><div class="aa">✔ ${q[1]}</div></div>`).join('');
+$('bGrid').addEventListener('click',e=>{ const b=e.target.closest('.bq'); if(!b) return; if(!b.classList.contains('open')){ b.classList.add('open'); SND.page(); } else if(!b.classList.contains('ans')){ b.classList.add('ans'); SND.ok(); } else b.classList.remove('open','ans'); });
+/* ---------- денелер ---------- */
+const OBJ={
+  stone(ctx,x,yb,s){ ctx.fillStyle='#7d7a73'; ctx.beginPath(); ctx.moveTo(x-24*s,yb); ctx.bezierCurveTo(x-34*s,yb-22*s,x-8*s,yb-44*s,x+12*s,yb-34*s); ctx.bezierCurveTo(x+34*s,yb-26*s,x+30*s,yb-4*s,x+20*s,yb); ctx.closePath(); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.16)'; ctx.beginPath(); ctx.ellipse(x-8*s,yb-26*s,9*s,5*s,-.5,0,7); ctx.fill(); },
+  nut(ctx,x,yb,s){ const r=17*s, cy=yb-r; ctx.fillStyle='#9aa1aa'; ctx.beginPath(); for(let i=0;i<6;i++){ const a=i*Math.PI/3+Math.PI/6, X=x+Math.cos(a)*r, Y=cy+Math.sin(a)*r; i?ctx.lineTo(X,Y):ctx.moveTo(X,Y); } ctx.closePath(); ctx.fill(); ctx.strokeStyle='#6d737b'; ctx.lineWidth=1.5; ctx.stroke();
+    ctx.fillStyle='#e9e3d3'; ctx.beginPath(); ctx.arc(x,cy,7*s,0,7); ctx.fill(); ctx.stroke(); },
+  key(ctx,x,yb,s){ ctx.strokeStyle='#8c8f95'; ctx.lineWidth=5*s; ctx.lineCap='round'; ctx.beginPath(); ctx.arc(x,yb-46*s,9*s,0,7); ctx.moveTo(x,yb-37*s); ctx.lineTo(x,yb-2*s); ctx.moveTo(x,yb-6*s); ctx.lineTo(x+9*s,yb-6*s); ctx.moveTo(x,yb-14*s); ctx.lineTo(x+7*s,yb-14*s); ctx.stroke(); ctx.lineCap='butt'; },
+  metal(ctx,x,yb,s){ const w=34*s,h=56*s; const g=ctx.createLinearGradient(x-w/2,0,x+w/2,0); g.addColorStop(0,'#6d737b'); g.addColorStop(.4,'#d9dde2'); g.addColorStop(1,'#6d737b'); ctx.fillStyle=g; ctx.fillRect(x-w/2,yb-h,w,h); ctx.fillStyle='#c3c8ce'; ctx.beginPath(); ctx.ellipse(x,yb-h,w/2,5*s,0,0,7); ctx.fill(); },
+  wood(ctx,x,yb,s){ const w=36*s,h=72*s; ctx.fillStyle='#c79a5a'; ctx.fillRect(x-w/2,yb-h,w,h); ctx.strokeStyle='#8a6a3a'; ctx.lineWidth=1.2; ctx.strokeRect(x-w/2,yb-h,w,h); for(let i=1;i<4;i++){ ctx.beginPath(); ctx.moveTo(x-w/2+i*9*s,yb-h); ctx.bezierCurveTo(x-w/2+i*7*s,yb-h*.6,x-w/2+i*11*s,yb-h*.3,x-w/2+i*9*s,yb); ctx.stroke(); } },
+  potato(ctx,x,yb,s){ ctx.fillStyle='#b9925a'; ctx.beginPath(); ctx.ellipse(x,yb-30*s,42*s,30*s,.15,0,7); ctx.fill(); ctx.fillStyle='rgba(90,60,20,.45)'; [[-16,-8],[8,-16],[18,6],[-8,10]].forEach(([a,b])=>{ ctx.beginPath(); ctx.arc(x+a*s,yb-30*s+b*s,2.4*s,0,7); ctx.fill(); }); },
+  apple(ctx,x,yb,s){ const r=30*s; ctx.fillStyle='#c8352b'; ctx.beginPath(); ctx.arc(x-r*.35,yb-r,r,0,7); ctx.arc(x+r*.35,yb-r,r,0,7); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.35)'; ctx.beginPath(); ctx.ellipse(x-r*.6,yb-r*1.35,r*.25,r*.4,-.5,0,7); ctx.fill();
+    ctx.strokeStyle='#5a3a1a'; ctx.lineWidth=3*s; ctx.beginPath(); ctx.moveTo(x,yb-r*1.8); ctx.lineTo(x+3*s,yb-r*2.3); ctx.stroke(); },
+  bigstone(ctx,x,yb,s){ OBJ.stone(ctx,x,yb,s*1.45); },
+  crown(ctx,x,yb,s){ const w=74*s,h=46*s; ctx.fillStyle='#e0b23a'; ctx.strokeStyle='#8f6d14'; ctx.lineWidth=1.6; ctx.beginPath(); ctx.moveTo(x-w/2,yb); ctx.lineTo(x-w/2-4*s,yb-h); ctx.lineTo(x-w/4,yb-h*.5); ctx.lineTo(x,yb-h*1.16); ctx.lineTo(x+w/4,yb-h*.5); ctx.lineTo(x+w/2+4*s,yb-h); ctx.lineTo(x+w/2,yb); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle='#c0392b'; ctx.beginPath(); ctx.arc(x,yb-h*.34,5*s,0,7); ctx.fill(); ctx.fillStyle='#2d6fb5'; [[-w*.32],[w*.32]].forEach(([a])=>{ ctx.beginPath(); ctx.arc(x+a,yb-h*.3,4*s,0,7); ctx.fill(); });
+    ctx.fillStyle='#fff3bd'; [[-w/2-4*s,-h],[0,-h*1.16],[w/2+4*s,-h]].forEach(([a,b])=>{ ctx.beginPath(); ctx.arc(x+a,yb+b,3.4*s,0,7); ctx.fill(); }); }
+};
+
+/* ---------- мензурка ---------- */
+const CYL=[{max:100,dig:10,n:10,t:'100 мл'},{max:250,dig:50,n:5,t:'250 мл'},{max:50,dig:10,n:5,t:'50 мл'}];
+const cDiv=c=>c.dig/c.n;
+function cylG(x,yb,H,W,cfg){ return {x,yb,H,W,cfg,py:v=>yb-8-v/cfg.max*H}; }
+function drawCyl(ctx,G,level,inner){ const {x,yb,H,W,cfg}=G, L=x-W/2, R=x+W/2, top=G.py(cfg.max)-16, c=cDiv(cfg);
+  ctx.fillStyle='#8fa0ad'; rr(ctx,L-16,yb,W+32,9,4); ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,.42)'; ctx.fillRect(L,top,W,yb-top);
+  if(inner) inner();
+  const y=G.py(level);
+  if(level>0){ ctx.fillStyle='rgba(78,150,222,.58)'; ctx.beginPath(); ctx.moveTo(L,y-3); ctx.quadraticCurveTo(x,y+3,R,y-3); ctx.lineTo(R,yb); ctx.lineTo(L,yb); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle='rgba(25,85,155,.9)'; ctx.lineWidth=1.6; ctx.beginPath(); ctx.moveTo(L,y-3); ctx.quadraticCurveTo(x,y+3,R,y-3); ctx.stroke(); }
+  ctx.strokeStyle='#23303a';
+  const K=Math.round(cfg.max/c); for(let k=0;k<=K;k++){ const v=k*c, py=G.py(v), big=v%cfg.dig===0; ctx.lineWidth=big?1.6:1; ctx.beginPath(); ctx.moveTo(L,py); ctx.lineTo(L+(big?W*.3:W*.16),py); ctx.stroke(); if(big) label(ctx,String(v),L-6,py+4,'#23303a',12,'right',true); }
+  ctx.strokeStyle='rgba(50,75,90,.9)'; ctx.lineWidth=2.2; ctx.beginPath(); ctx.moveTo(L-5,top-3); ctx.lineTo(L,top); ctx.lineTo(L,yb); ctx.lineTo(R,yb); ctx.lineTo(R,top); ctx.lineTo(R+5,top-3); ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,.4)'; ctx.fillRect(R-12,top+10,5,yb-top-24);
+  label(ctx,'мл',L-6,top+6,'#556',11,'right',true); }
+function drawLens(ctx,G,level,zx,zy,zw,zh){ const cfg=G.cfg, c=cDiv(cfg), ppm=Math.max(G.H/cfg.max*3,24/c), y0=zy+zh/2;
+  ctx.save(); rr(ctx,zx,zy,zw,zh,10); ctx.fillStyle='#fdfdf8'; ctx.fill(); ctx.clip();
+  ctx.fillStyle='rgba(78,150,222,.5)'; ctx.beginPath(); ctx.moveTo(zx,y0-9); ctx.quadraticCurveTo(zx+zw/2,y0+9,zx+zw,y0-9); ctx.lineTo(zx+zw,zy+zh); ctx.lineTo(zx,zy+zh); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle='rgba(25,85,155,.9)'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(zx,y0-9); ctx.quadraticCurveTo(zx+zw/2,y0+9,zx+zw,y0-9); ctx.stroke();
+  const K=Math.round(cfg.max/c); for(let k=0;k<=K;k++){ const v=k*c, y=y0+(level-v)*ppm; if(y<zy-20||y>zy+zh+20) continue; const big=v%cfg.dig===0; ctx.strokeStyle='#1d2430'; ctx.lineWidth=big?3:1.6; ctx.beginPath(); ctx.moveTo(zx+zw-(big?92:56),y); ctx.lineTo(zx+zw,y); ctx.stroke(); if(big) label(ctx,String(v),zx+zw-100,y+8,'#1d2430',24,'right',true); }
+  ctx.setLineDash([6,5]); ctx.strokeStyle='#b8442f'; ctx.lineWidth=1.6; ctx.beginPath(); ctx.moveTo(zx+8,y0); ctx.lineTo(zx+zw,y0); ctx.stroke(); ctx.setLineDash([]);
+  ctx.restore(); ctx.strokeStyle='#8d939a'; ctx.lineWidth=2; rr(ctx,zx,zy,zw,zh,10); ctx.stroke();
+  label(ctx,'👁 үлкейтілген шкала',zx+zw/2,zy+zh+18,'#6a6658',14,'center',true); }
+
+/* ---------- ортақ: батыру зертханасы ---------- */
+function mkDip(cfg,bodies,gx){ return {cfg,bodies,G:cylG(gx||190,335,282,132,cfg),o:0,V1:50,lv:50,y:null,tgt:0,drag:false,wet:false,needle:false}; }
+function dipStep(d,dt){ const b=d.bodies[d.o], G=d.G, floor=G.yb-3, outY=G.py(d.V1)-12; if(d.y===null) d.y=outY;
+  const surf=G.py(d.lv);
+  let ty=d.tgt?floor:outY;
+  if(d.tgt&&b.fl&&!d.needle) ty=Math.min(floor,surf+b.fl*b.h);
+  if(!d.drag){ const sp=170*dt; d.y+=Math.max(-sp,Math.min(sp,ty-d.y)); }
+  else if(b.fl&&!d.needle) d.y=Math.min(d.y,surf+b.fl*b.h);
+  const f=Math.max(0,Math.min(1,(d.y-surf)/b.h));
+  if(f>.02&&!d.wet){ d.wet=true; SND.spin(); } if(f<=.02) d.wet=false;
+  const tv=d.V1+f*b.V; d.lv+=(tv-d.lv)*Math.min(1,dt*7); d.f=f; }
+function dipDraw(ctx,w,h,d){ const b=d.bodies[d.o], G=d.G; ctx.fillStyle='#efe9da'; ctx.fillRect(0,0,w,h); table_(ctx,w,h,344);
+  drawCyl(ctx,G,d.lv,()=>{ ctx.strokeStyle='#6a5a44'; ctx.lineWidth=1.3; ctx.beginPath(); ctx.moveTo(G.x,0); ctx.lineTo(G.x,d.y-b.h+2); ctx.stroke(); OBJ[b.k](ctx,G.x,d.y,b.s||1);
+    if(d.needle){ ctx.strokeStyle='#555'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(G.x+16,0); ctx.lineTo(G.x+10,d.y-b.h+6); ctx.stroke(); } });
+  drawLens(ctx,G,d.lv,470,18,350,290); }
+function dipPointer(id,getD){ const cv=$(id); const toY=e=>{ const r=cv.getBoundingClientRect(); return {x:(e.clientX-r.left)*cv.width/r.width,y:(e.clientY-r.top)*cv.height/r.height}; };
+  cv.addEventListener('pointerdown',e=>{ const d=getD(); if(!d||d.y===null) return; const p=toY(e), b=d.bodies[d.o]; if(Math.abs(p.x-d.G.x)<d.G.W*.75&&p.y>d.y-b.h-40&&p.y<d.y+25){ d.drag=true; d.oy=d.y-p.y; cv.setPointerCapture(e.pointerId); e.preventDefault(); } });
+  cv.addEventListener('pointermove',e=>{ const d=getD(); if(!d||!d.drag) return; const p=toY(e); d.y=Math.max(d.bodies[d.o].h+6,Math.min(d.G.yb-3,p.y+d.oy)); });
+  const up=()=>{ const d=getD(); if(!d||!d.drag) return; d.drag=false; d.tgt=d.y>d.G.py(d.lv)?1:0; };
+  cv.addEventListener('pointerup',up); cv.addEventListener('pointercancel',up); }
+
+/* 1. Кіріспе */
+LABS.cTitle={t:0,frame(ctx,w,h,dt){ this.t+=dt; const t=this.t%8, G=cylG(150,335,270,110,CYL[0]);
+  ctx.fillStyle='#efe9da'; ctx.fillRect(0,0,w,h); table_(ctx,w,h,344);
+  const y=t<1?G.py(40)-14:t<3.5?G.py(40)-14+(t-1)/2.5*(G.yb-3-(G.py(40)-14)):G.yb-3, surf=G.py(40), f=Math.max(0,Math.min(1,(y-surf-14)/44));
+  drawCyl(ctx,G,40+30*f,()=>{ ctx.strokeStyle='#6a5a44'; ctx.lineWidth=1.2; ctx.beginPath(); ctx.moveTo(G.x,0); ctx.lineTo(G.x,y-40); ctx.stroke(); OBJ.stone(ctx,G.x,y,1); });
+  label(ctx,'V = V₂ − V₁',G.x,382,'#fff',22,'center',true,'Georgia, serif');
+  isoBlock(ctx,450,300,4,3,3,26,Math.min(36,Math.floor(t*7)));
+  label(ctx,'V = a·b·c',450,382,'#fff',22,'center',true,'Georgia, serif');
+  // сызғыш
+  ctx.fillStyle='#f1d98f'; ctx.fillRect(610,250,210,34); ctx.strokeStyle='#8f7224'; ctx.strokeRect(610,250,210,34); for(let i=0;i<=20;i++){ const X=615+i*10; ctx.beginPath(); ctx.moveTo(X,250); ctx.lineTo(X,250+(i%10===0?18:i%5===0?13:8)); ctx.stroke(); if(i%10===0) label(ctx,String(i/10),X,282,'#4a3608',11,'center',true); }
+  ctx.fillStyle='#c79a5a'; ctx.fillRect(615,190,150,60); ctx.strokeStyle='#8a6a3a'; ctx.strokeRect(615,190,150,60); label(ctx,'сызғыш',715,382,'#fff',22,'center',true,'Georgia, serif'); }};
+
+/* изометриялық блок: unit кубиктер */
+function isoP(ox,oy,u,x,y,z){ return [ox+(x-y)*u*.866,oy+(x+y)*u*.5-z*u]; }
+function isoCube(ctx,ox,oy,u,x,y,z,hue){ const P=(a,b,c)=>isoP(ox,oy,u,a,b,c); const poly=(pts,col)=>{ ctx.fillStyle=col; ctx.beginPath(); pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath(); ctx.fill(); ctx.strokeStyle='rgba(30,40,50,.45)'; ctx.lineWidth=1; ctx.stroke(); };
+  poly([P(x,y+1,z),P(x+1,y+1,z),P(x+1,y+1,z+1),P(x,y+1,z+1)],`hsl(${hue},45%,46%)`);
+  poly([P(x+1,y,z),P(x+1,y+1,z),P(x+1,y+1,z+1),P(x+1,y,z+1)],`hsl(${hue},45%,58%)`);
+  poly([P(x,y,z+1),P(x+1,y,z+1),P(x+1,y+1,z+1),P(x,y+1,z+1)],`hsl(${hue},52%,72%)`); }
+function isoBlock(ctx,ox,oy,a,b,c,u,count){ const list=[]; for(let z=0;z<c;z++) for(let y=0;y<b;y++) for(let x=0;x<a;x++) list.push([x,y,z]);
+  const shown=list.slice(0,count===undefined?list.length:count).sort((p,q)=>(p[0]+p[1]+p[2]*.001)-(q[0]+q[1]+q[2]*.001)||p[2]-q[2]);
+  shown.sort((p,q)=>p[2]-q[2]||(p[0]+p[1])-(q[0]+q[1]));
+  for(const [x,y,z] of shown) isoCube(ctx,ox,oy,u,x,y,z,200+z*34); }
+
+/* 5. Проблема: тәж */
+const AR={ph:'ready',t:0};
+function arOpts(on){ [...$('arOpts').children].forEach(b=>b.disabled=!on); }
+function arReset(){ Object.assign(AR,{ph:'ready',t:0}); arOpts(false); [...$('arOpts').children].forEach(b=>b.classList.remove('ok','no')); $('asMsg').innerHTML='Алдымен оқиғаны көрейік: <b>▶ Бастау</b>.'; }
+$('arPlay').onclick=()=>{ if(AR.ph==='ready'){ AR.ph='ruler'; AR.t=0; } };
+$('arRe').onclick=arReset;
+$('arOpts').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b||b.disabled) return; const k=b.dataset.k;
+  const M={ruler:'Сызғышпен өлшей алмаймыз: тәждің пішіні <b>дұрыс емес</b>, оның «ұзындығы, ені, биіктігі» деген бірыңғай өлшемдері жоқ.',melt:'Шынында да көлемді табар едік, бірақ патша: <b>«Тәжді бұзуға болмайды!»</b> – деді. Басқа жол ізде.',scale:'Таразы <b>массаны</b> көрсетеді, ал бізге <b>көлем</b> керек. Массасы бірдей денелердің көлемі әртүрлі болуы мүмкін.'};
+  if(k!=='water'){ b.classList.add('no'); b.disabled=true; SND.bad(); $('asMsg').innerHTML='✘ '+M[k]; return; }
+  b.classList.add('ok'); arOpts(false); SND.ok(); AR.ph='bath'; AR.t=0; $('asMsg').innerHTML='✔ <b>Дұрыс!</b> Архимед ваннаға түскенде су деңгейі көтерілгенін байқады…'; });
+function drawArch(ctx,x,y,s){ ctx.fillStyle='#e6b98a'; ctx.beginPath(); ctx.arc(x,y-58*s,20*s,0,7); ctx.fill(); ctx.fillStyle='#ece7da'; rr(ctx,x-24*s,y-38*s,48*s,60*s,12*s); ctx.fill();
+  ctx.fillStyle='#d9d4c6'; ctx.beginPath(); ctx.moveTo(x-20*s,y-52*s); ctx.quadraticCurveTo(x,y-22*s,x+20*s,y-52*s); ctx.quadraticCurveTo(x,y-40*s,x-20*s,y-52*s); ctx.fill(); ctx.fillStyle='#d9d4c6'; ctx.beginPath(); ctx.arc(x,y-70*s,16*s,Math.PI,0); ctx.fill(); ctx.fillStyle='#2a2d31'; ctx.beginPath(); ctx.arc(x-7*s,y-60*s,2*s,0,7); ctx.arc(x+7*s,y-60*s,2*s,0,7); ctx.fill(); }
+LABS.cAr={frame(ctx,w,h,dt){ AR.t+=dt; ctx.fillStyle='#efe9da'; ctx.fillRect(0,0,w,h); const t=AR.t;
+  // сарай
+  ctx.fillStyle='#e6dcc4'; ctx.fillRect(0,0,w,330); ctx.fillStyle='#d3c5a4'; [90,300,540,750].forEach(x=>{ ctx.fillRect(x-20,0,40,330); ctx.fillRect(x-30,0,60,16); ctx.fillRect(x-30,314,60,16); }); table_(ctx,w,h,330);
+  if(AR.ph==='ready'||AR.ph==='ruler'||AR.ph==='ask'){
+    ctx.fillStyle='#a3774a'; ctx.fillRect(280,250,280,14); ctx.fillRect(310,264,18,66); ctx.fillRect(512,264,18,66);
+    OBJ.crown(ctx,420,250,1.9);
+    if(AR.ph==='ruler'||AR.ph==='ask'){ const a=AR.ph==='ask'?0:Math.sin(t*2.2)*.5, tx=AR.ph==='ask'?420:420+Math.sin(t*1.4)*70, ty=AR.ph==='ask'?150:175+Math.cos(t*1.9)*45;
+      ctx.save(); ctx.translate(tx,ty); ctx.rotate(a); ctx.fillStyle='#f1d98f'; ctx.fillRect(-120,-13,240,26); ctx.strokeStyle='#8f7224'; ctx.strokeRect(-120,-13,240,26); for(let i=0;i<=24;i++){ const X=-120+i*10; ctx.beginPath(); ctx.moveTo(X,-13); ctx.lineTo(X,-13+(i%10===0?14:7)); ctx.stroke(); } ctx.restore();
+      if(AR.ph==='ruler'&&t>4){ AR.ph='ask'; AR.t=0; arOpts(true); SND.beep(); $('asMsg').innerHTML='Сызғыш тәждің пішініне келмейді… Архимед не істейді? <b>Жауапты таңда.</b>'; }
+      if(AR.ph==='ask'){ label(ctx,'?',420,100,'#b8442f',72,'center',true,'Georgia, serif'); } }
+    label(ctx,'Тәждің көлемі қанша?',420,48,'#1d2430',28,'center',true,'Georgia, serif'); }
+  else if(AR.ph==='bath'){ const k=Math.min(1,Math.max(0,(t-.5)/2)), yw=232-34*k, xm=420, ym=150+k*72;
+    ctx.fillStyle='rgba(78,150,222,.65)'; ctx.fillRect(230,yw,380,296-yw);
+    if(k>=.2) drawArch(ctx,xm,ym,1.3); else drawArch(ctx,xm,ym,1.3);
+    ctx.fillStyle='rgba(78,150,222,.55)'; ctx.fillRect(230,yw,380,296-yw);
+    ctx.strokeStyle='#6a4b2a'; ctx.lineWidth=9; ctx.beginPath(); ctx.moveTo(224,150); ctx.lineTo(224,300); ctx.lineTo(616,300); ctx.lineTo(616,150); ctx.stroke();
+    ctx.setLineDash([7,6]); ctx.strokeStyle='#b8442f'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(640,232); ctx.lineTo(610,232); ctx.stroke(); ctx.setLineDash([]); label(ctx,'бастапқы деңгей',648,237,'#b8442f',15,'left',true);
+    if(k>.6) { ctx.strokeStyle='#1f5fa8'; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(640,yw); ctx.lineTo(610,yw); ctx.stroke(); label(ctx,'су көтерілді!',648,yw+5,'#1f5fa8',15,'left',true); }
+    if(t>2.6){ label(ctx,'Эврика!',420,70,'#b8442f',54,'center',true,'Georgia, serif'); }
+    if(t>4.2){ AR.ph='vessel'; AR.t=0; $('asMsg').innerHTML='<b>Дене батқанда өзінің көлеміндей суды ығыстырады.</b> Тәжді сумен лық толы ыдысқа батырсақ…'; } }
+  else { const k=Math.min(1,t/2.4), V=60*Math.min(1,Math.max(0,(t-.6)/2.4)), yc=120+k*150;
+    const vx=240,vw=200,vy=150,vb=325; ctx.fillStyle='rgba(78,150,222,.55)'; ctx.fillRect(vx,vy+22,vw,vb-vy-22);
+    OBJ.crown(ctx,vx+vw/2,yc,1.3); ctx.strokeStyle='#6a5a44'; ctx.lineWidth=1.3; ctx.beginPath(); ctx.moveTo(vx+vw/2,0); ctx.lineTo(vx+vw/2,yc-60); ctx.stroke();
+    ctx.fillStyle='rgba(78,150,222,.45)'; ctx.fillRect(vx,vy+22,vw,vb-vy-22);
+    ctx.strokeStyle='#44576a'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(vx,vy-20); ctx.lineTo(vx,vb); ctx.lineTo(vx+vw,vb); ctx.lineTo(vx+vw,vy+16); ctx.lineTo(vx+vw+80,vy+30); ctx.moveTo(vx+vw,vy-20); ctx.lineTo(vx+vw,vy+4); ctx.lineTo(vx+vw+80,vy+18); ctx.stroke();
+    if(t>.6&&t<3.1){ ctx.strokeStyle='rgba(78,150,222,.85)'; ctx.lineWidth=5; ctx.beginPath(); ctx.moveTo(vx+vw+80,vy+26); ctx.quadraticCurveTo(vx+vw+105,vy+50,vx+vw+108,vb-60); ctx.stroke(); }
+    const G=cylG(vx+vw+108,325,130,70,{max:100,dig:20,n:4}); drawCyl(ctx,G,V);
+    label(ctx,'құйғыш ыдыс',vx+vw/2,352,'#fff',17,'center',true); label(ctx,'мензурка',G.x,352,'#fff',17,'center',true);
+    label(ctx,'V = '+Math.round(V)+' см³',G.x+60,170,'#1f5fa8',30,'left',true,'Georgia, serif');
+    if(t>3.4&&AR.ph==='vessel'){ AR.ph='end'; $('asMsg').innerHTML='✔ <b>Ағып шыққан судың көлемі – тәждің көлемі.</b> Осылай дұрыс емес пішінді дененің көлемін оны бұзбай өлшейміз. Бүгінгі сабақта дәл осыны үйренеміз!'; SND.bell(); } } }};
+arReset();
+
+/* 6. Көлем */
+LABS.cVol={t:0,frame(ctx,w,h,dt){ this.t+=dt; const t=this.t%7, k=Math.min(1,Math.max(0,(t-1)/3.5)); ctx.fillStyle='#efe9da'; ctx.fillRect(0,0,w,h); table_(ctx,w,h,206);
+  // бөтелке
+  const bx=120; ctx.save(); const tilt=k>0&&k<1?.95:(k>=1?.95*Math.max(0,1-(t-4.5)/.5):Math.min(.95,t)); ctx.translate(bx+10,120); ctx.rotate(tilt);
+  ctx.fillStyle='rgba(120,180,230,.3)'; rr(ctx,-24,-55,48,110,8); ctx.fill(); ctx.strokeStyle='#5a8bb5'; ctx.lineWidth=2; ctx.stroke(); ctx.fillStyle='#2a5fa8'; ctx.fillRect(-9,-72,18,17);
+  ctx.fillStyle='rgba(78,150,222,.6)'; const fh=100*(1-k); if(fh>1){ ctx.fillRect(-22,53-fh,44,fh); } ctx.restore();
+  label(ctx,'1 л',bx-40,195,'#1d2430',22,'center',true,'Georgia, serif');
+  if(k>0&&k<1){ ctx.strokeStyle='rgba(78,150,222,.85)'; ctx.lineWidth=6; ctx.beginPath(); ctx.moveTo(bx+55,84); ctx.quadraticCurveTo(bx+100,90,bx+118,206-130*k-6); ctx.stroke(); }
+  // 1 дм³ текше
+  const cx=330,cs=130,cy=206; ctx.fillStyle='rgba(78,150,222,.6)'; ctx.fillRect(cx-cs/2,cy-cs*k,cs,cs*k);
+  ctx.strokeStyle='#2c3340'; ctx.lineWidth=2.5; ctx.strokeRect(cx-cs/2,cy-cs,cs,cs); ctx.beginPath(); ctx.moveTo(cx-cs/2,cy-cs); ctx.lineTo(cx-cs/2+34,cy-cs-26); ctx.lineTo(cx+cs/2+34,cy-cs-26); ctx.lineTo(cx+cs/2,cy-cs); ctx.moveTo(cx+cs/2+34,cy-cs-26); ctx.lineTo(cx+cs/2+34,cy-26); ctx.lineTo(cx+cs/2,cy); ctx.stroke();
+  label(ctx,'1 дм = 10 см',cx,cy+22,'#fff',15,'center',true);
+  label(ctx,'1 л = 1 дм³',620,60,'#1d2430',32,'center',true,'Georgia, serif'); label(ctx,'= 10·10·10 см³ = 1000 см³',620,98,'#2d5f4f',22,'center',true,'Georgia, serif');
+  ctx.fillStyle='#fff'; ctx.strokeStyle='#8a8a8a'; ctx.lineWidth=1.5; ctx.fillRect(540,132,26,26); ctx.strokeRect(540,132,26,26); ctx.beginPath(); ctx.moveTo(540,132); ctx.lineTo(548,124); ctx.lineTo(574,124); ctx.lineTo(566,132); ctx.moveTo(574,124); ctx.lineTo(574,150); ctx.lineTo(566,158); ctx.stroke();
+  label(ctx,'1 см³ = 1 мл (текше қант)',590,152,'#1d2430',19,'left',true); }};
+function cvShow(){ const v=parseNum($('cvV').value), k=+$('cvU').value; if(!isFinite(v)){ $('cvOut').textContent='—'; return; } const m=v*k; const s=x=>{ if(x===0) return '0'; if(x>=.001&&x<1e7) return nf(x,6); const e=Math.floor(Math.log10(x)); return nf(x/Math.pow(10,e),3)+'·10^'+e; };
+  $('cvOut').textContent='= '+s(m)+' м³ = '+s(m*1000)+' л = '+s(m*1e6)+' см³'; }
+$('cvV').oninput=cvShow; $('cvU').onchange=cvShow; cvShow();
+
+/* 7. Шкала */
+const SCD={stroke:['Шкала штрихы','физикалық шаманың кейбір мәндеріне сәйкес келетін шкаладағы белгілер (сызықша, нүкте т.б.).'],dig:['Цифрланған шкала штрихы','сандар қойылған шкаланың белгілері.'],zero:['Нөлдік белгі','өлшенетін шаманың нөлдік мәніне сәйкес келетін шкала белгісі.'],part:['Шкаланың бөлігі','шкаланың екі іргелес белгілері арасындағы аралық.'],val:['Шкаланың бөлік құны','шкаланың екі іргелес белгілеріне сәйкес келетін шама мәндерінің айырымы. Мұнда: (90 − 80) : 10 = 1 мл.']};
+let scK='val';
+function scShow(){ $('scDef').innerHTML=`<b>${SCD[scK][0]}</b> — ${SCD[scK][1]}`; [...$('scBtns').children].forEach(b=>b.classList.toggle('on',b.dataset.k===scK)); }
+Object.keys(SCD).forEach(k=>{ const b=document.createElement('button'); b.className='btn'; b.dataset.k=k; b.textContent=SCD[k][0]; b.onclick=()=>{ scK=k; scShow(); SND.page(); }; $('scBtns').appendChild(b); }); scShow();
+LABS.cScale={t:0,frame(ctx,w,h,dt){ this.t+=dt; ctx.fillStyle='#efe9da'; ctx.fillRect(0,0,w,h); table_(ctx,w,h,362); const G=cylG(130,352,310,110,CYL[0]); drawCyl(ctx,G,72);
+  const pulse=.5+.5*Math.sin(this.t*4), RED=`rgba(184,68,47,${.55+.45*pulse})`;
+  // үлкейтілген шкала: 60…90
+  const zx=330,zy=18,zw=490,zh=340,v0=60,v1=90,Y=v=>zy+zh-14-(v-v0)/(v1-v0)*(zh-28),tx=zx+110;
+  ctx.save(); rr(ctx,zx,zy,zw,zh,10); ctx.fillStyle='#fdfdf8'; ctx.fill(); ctx.clip();
+  ctx.fillStyle='rgba(78,150,222,.42)'; ctx.fillRect(zx,Y(72),zw,zy+zh-Y(72));
+  if(scK==='part'){ ctx.fillStyle=RED; ctx.fillRect(tx,Y(81),170,Y(80)-Y(81)); }
+  for(let v=v0;v<=v1;v++){ const big=v%10===0, y=Y(v); ctx.strokeStyle=(scK==='stroke'&&v===76)||(scK==='dig'&&big)?RED:'#1d2430'; ctx.lineWidth=big?3.5:2; if((scK==='stroke'&&v===76)) ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(tx,y); ctx.lineTo(tx+(big?170:110),y); ctx.stroke();
+    if(big) label(ctx,String(v),tx-14,y+10,scK==='dig'?'#b8442f':'#1d2430',28,'right',true); }
+  ctx.restore(); ctx.strokeStyle='#8d939a'; ctx.lineWidth=2; rr(ctx,zx,zy,zw,zh,10); ctx.stroke();
+  label(ctx,'су деңгейі: 72 мл',zx+300,Y(72)-8,'#1f5fa8',17,'left',true);
+  if(scK==='stroke'){ label(ctx,'← штрих',tx+120,Y(76)+6,'#b8442f',22,'left',true); }
+  if(scK==='dig'){ label(ctx,'← цифрланған штрих',tx+180,Y(80)+6,'#b8442f',20,'left',true); }
+  if(scK==='part'){ label(ctx,'← бөлік',tx+180,Y(80.5)+7,'#b8442f',22,'left',true); }
+  if(scK==='val'){ const x=tx+195; ctx.strokeStyle='#b8442f'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(x,Y(80)); ctx.lineTo(x+14,Y(80)); ctx.lineTo(x+14,Y(90)); ctx.lineTo(x,Y(90)); ctx.stroke(); label(ctx,'10 бөлік',x+24,Y(85)-6,'#b8442f',19,'left',true); label(ctx,'(90−80):10 = 1 мл',x+24,Y(85)+20,'#b8442f',17,'left',true); }
+  if(scK==='zero'){ ctx.strokeStyle=RED; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(G.x-55,G.py(0)); ctx.lineTo(G.x-20,G.py(0)); ctx.stroke(); label(ctx,'нөлдік белгі ↙',G.x+70,G.py(0)-30,'#b8442f',16,'left',true); }
+  ctx.strokeStyle='rgba(141,147,154,.7)'; ctx.setLineDash([5,5]); ctx.lineWidth=1.3; ctx.beginPath(); ctx.moveTo(G.x+55,G.py(90)); ctx.lineTo(zx,zy+14); ctx.moveTo(G.x+55,G.py(60)); ctx.lineTo(zx,zy+zh-14); ctx.stroke(); ctx.setLineDash([]); }};
+
+/* 8. Мензурка */
+const MZ={c:0,v:72,lv:0,pour:0};
+const mzG=()=>cylG(190,335,282,132,CYL[MZ.c]);
+function mzSet(v){ const c=CYL[MZ.c]; MZ.v=Math.max(0,Math.min(c.max,Math.round(v/cDiv(c))*cDiv(c))); $('mzV').value=MZ.v; $('mzVv').textContent=MZ.v+' мл'; $('mzRes').innerHTML='Шкаланы оқы да, жауабыңды жаз.'; ['mzA','mzB','mzD'].forEach(i=>$(i).value=''); }
+CYL.forEach((c,i)=>{ const b=document.createElement('button'); b.className='btn'+(i===0?' on':''); b.textContent='Цилиндр '+c.t; b.onclick=()=>{ MZ.c=i; [...$('mzC').children].forEach((x,j)=>x.classList.toggle('on',j===i)); $('mzV').max=c.max; $('mzV').step=cDiv(c); mzSet(c.max*.56); }; $('mzC').appendChild(b); });
+$('mzV').oninput=()=>mzSet(+$('mzV').value);
+$('mzRnd').onclick=()=>{ const c=CYL[MZ.c], K=Math.round(c.max/cDiv(c)); mzSet(cDiv(c)*(Math.floor(K*.2)+Math.floor(Math.random()*K*.7))); SND.spin(); };
+mzSet(72);
+$('mzChk').onclick=()=>{ const c=CYL[MZ.c], d=cDiv(c), a=near(parseNum($('mzA').value),d), b=near(parseNum($('mzB').value),MZ.v), e=near(parseNum($('mzD').value),d/2);
+  $('mzRes').innerHTML=[a?'<span class="good">Б.Қ. ✔</span>':`<span class="bad">Б.Қ. ✘</span> (${c.dig}-тің ішінде ${c.n} бөлік)`,b?'<span class="good">V ✔</span>':'<span class="bad">V ✘</span>',e?'<span class="good">ΔV ✔</span>':'<span class="bad">ΔV ✘</span> (Б.Қ. : 2)'].join(' · ')+(a&&b&&e?`<br><b>Жауабы: V = (${MZ.v} ± ${nf(d/2,2)}) мл</b>`:''); if(a&&b&&e) SND.ok(); else SND.bad(); };
+LABS.cMz={frame(ctx,w,h,dt){ const G=mzG(); const d=MZ.v-MZ.lv, pouring=d>.3; MZ.lv+=d*Math.min(1,dt*3); ctx.fillStyle='#efe9da'; ctx.fillRect(0,0,w,h); table_(ctx,w,h,344); drawCyl(ctx,G,MZ.lv);
+  if(pouring){ ctx.strokeStyle='rgba(78,150,222,.85)'; ctx.lineWidth=5; ctx.beginPath(); ctx.moveTo(G.x+60,20); ctx.quadraticCurveTo(G.x+20,40,G.x+14,G.py(MZ.lv)); ctx.stroke(); }
+  drawLens(ctx,G,MZ.lv,470,18,350,290); }};
+
+/* 9. Дұрыс пішін */
+const CU={a:4,b:3,c:2,n:24,go:false,acc:0,cube:false};
+function cuUpd(){ CU.a=+$('cuA').value; CU.b=+$('cuB').value; CU.c=+$('cuC').value; if(CU.cube){ CU.b=CU.a; CU.c=CU.a; $('cuB').value=CU.a; $('cuC').value=CU.a; } CU.n=CU.a*CU.b*CU.c; CU.go=false; CU.shown=CU.n;
+  $('cuAv').textContent=CU.a+' см'; $('cuBv').textContent=CU.b+' см'; $('cuCv').textContent=CU.c+' см'; $('cuV').value=''; $('cuVm').value=''; $('cuRes').textContent=''; cuMsg(); }
+function cuMsg(){ const {a,b,c}=CU; $('cuMsg').innerHTML=`Бір қабатта: <b>${a} · ${b} = ${a*b}</b> кубик. Қабат саны: <b>${c}</b>.<br>Барлығы: <b>${a} · ${b} · ${c}</b> кубик, әрқайсысы 1 см³.`; }
+['cuA','cuB','cuC'].forEach(id=>$(id).oninput=()=>{ if(CU.cube&&id!=='cuA'){ $('cuA').value=$(id).value; } cuUpd(); });
+$('cuCube').onclick=()=>{ CU.cube=!CU.cube; $('cuCube').classList.toggle('on',CU.cube); cuUpd(); };
+$('cuGo').onclick=()=>{ CU.go=true; CU.shown=0; CU.acc=0; };
+$('cuChk').onclick=()=>{ const V=CU.a*CU.b*CU.c, a=near(parseNum($('cuV').value),V), raw=$('cuVm').value.trim(), m=raw===''?null:near(parseNum(raw),V*1e-6); $('cuRes').innerHTML=(a?'<span class="good">✔</span>':`<span class="bad">✘ ${CU.a}·${CU.b}·${CU.c}</span>`)+(m===null?'':m?' <span class="good">м³ ✔</span>':' <span class="bad">м³ ✘</span>'); if(a&&m!==false) SND.ok(); else SND.bad(); };
+cuUpd();
+LABS.cCubes={frame(ctx,w,h,dt){ ctx.fillStyle='#efe9da'; ctx.fillRect(0,0,w,h); const {a,b,c,n}=CU; if(CU.go){ CU.acc+=dt*Math.max(6,n/5); CU.shown=Math.min(n,Math.floor(CU.acc)); if(CU.shown>=n) CU.go=false; }
+  const u=Math.min(34,300/Math.max(a+b,c*1.6+ (a+b)*.5)), ox=340+(b-a)*u*.433, oy=300-(a+b)*u*.5;
+  isoP; ctx.fillStyle='rgba(0,0,0,.08)'; const S=(x,y)=>isoP(ox,oy,u,x,y,0); ctx.beginPath(); [S(0,0),S(a,0),S(a,b),S(0,b)].forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath(); ctx.fill();
+  isoBlock(ctx,ox,oy,a,b,c,u,CU.shown);
+  const A=S(a/2,b), B=S(a,b/2), Top=isoP(ox,oy,u,a,b,c/2);
+  label(ctx,'a = '+a+' см',A[0]-52,A[1]+26,'#b8442f',19,'center',true); label(ctx,'b = '+b+' см',B[0]+58,B[1]+26,'#1f5fa8',19,'center',true); label(ctx,'c = '+c+' см',S(a,b)[0]+ (u*.4)+ (b>a?0:0)+Math.max(a,b)*u*.7+40,Top[1],'#2e7d4f',19,'center',true);
+  label(ctx,'Кубиктер: '+CU.shown+' / '+n,120,40,'#1d2430',21,'center',true,'Georgia, serif');
+  if(CU.shown>=n) label(ctx,`V = ${a}·${b}·${c} = ${n} см³`,660,44,'#2d5f4f',27,'center',true,'Georgia, serif'); }};
+
+/* 10. Ығыстыру */
+const DIPB=[{k:'stone',n:'Тас',V:24,h:42},{k:'nut',n:'🔩 Гайка',V:12,h:34},{k:'key',n:'🗝 Кілт',V:8,h:56},{k:'metal',n:'⚙ Металл цилиндр',V:15,h:60}];
+const DP=mkDip(CYL[0],DIPB);
+DIPB.forEach((b,i)=>{ const x=document.createElement('button'); x.className='btn'+(i===0?' on':''); x.textContent=b.n; x.onclick=()=>{ DP.o=i; DP.tgt=0; DP.y=null; DP.lv=DP.V1; [...$('dipO').children].forEach((q,j)=>q.classList.toggle('on',j===i)); dipClr(); }; $('dipO').appendChild(x); });
+(()=>{ const x=document.createElement('button'); x.className='btn'; x.textContent='🎲 Басқа тас'; x.onclick=()=>{ DIPB[0].V=15+Math.floor(Math.random()*21); DP.o=0; DP.tgt=0; DP.y=null; DP.lv=DP.V1; [...$('dipO').children].forEach((q,j)=>q.classList.toggle('on',j===0)); dipClr(); toast('Жаңа тас – көлемі белгісіз'); }; $('dipO').appendChild(x); })();
+function dipClr(){ ['dipA','dipB','dipC'].forEach(i=>$(i).value=''); $('dipRes').textContent=''; }
+$('dipIn').onclick=()=>{ DP.tgt=1; }; $('dipOut').onclick=()=>{ DP.tgt=0; };
+$('dipV1').oninput=()=>{ DP.V1=+$('dipV1').value; $('dipV1v').textContent=DP.V1+' мл'; DP.tgt=0; DP.y=null; DP.lv=DP.V1; dipClr(); }; $('dipV1v').textContent='50 мл';
+$('dipChk').onclick=()=>{ const b=DIPB[DP.o], a=near(parseNum($('dipA').value),DP.V1), c=near(parseNum($('dipB').value),DP.V1+b.V), e=near(parseNum($('dipC').value),b.V);
+  $('dipRes').innerHTML=(a?'<span class="good">V₁ ✔</span>':'<span class="bad">V₁ ✘</span>')+' '+(c?'<span class="good">V₂ ✔</span>':'<span class="bad">V₂ ✘</span>')+' '+(e?`<span class="good">V = ${b.V} см³ ✔</span>`:'<span class="bad">V ✘</span>'); if(a&&c&&e) SND.ok(); else SND.bad(); };
+LABS.cDip={frame(ctx,w,h,dt){ dipStep(DP,dt); dipDraw(ctx,w,h,DP); }};
+dipPointer('cDip',()=>DP);
+
+/* 11. Топтық тапсырма */
+const GT=[
+  {t:'Мензурка',tx:'Цилиндрдің «20 мл» мен «40 мл» белгілерінің арасында <b>4 бөлік</b> бар. Су деңгейі «40»-тан <b>3 бөлік жоғары</b> тұр. Бөлік құны мен судың көлемін тап.',q:[['Б.Қ. =','мл',5],['V =','мл',55]]},
+  {t:'Сызғыш',tx:'Сіріңке қорабының өлшемдері <b>5 см × 4 см × 1,5 см</b>. Қораптың көлемін тап. Оны м³-пен жаз (мысалы, 2·10^-5).',q:[['V =','см³',30],['V =','м³',.00003]]},
+  {t:'Ығыстыру',tx:'Мензуркада <b>60 мл</b> су бар. Кілтті батырғанда деңгей <b>72 мл</b>-ге көтерілді. Кілттің көлемін тап. Осындай 5 кілт батырса, су деңгейі нешеге жетеді?',q:[['V =','см³',12],['V₂ =','мл',120]]},
+];
+let GTS=store.get('kl_gt',{});
+function gtBuild(){ $('gtRow').innerHTML=GT.map((g,i)=>`<div class="gtask grow" style="border-top-color:${GR[i].c}"><h4 style="color:${GR[i].c}">${GR[i].n} топ · ${g.t}</h4><div class="tx">${g.tx}</div>
+  ${g.q.map((q,j)=>`<div class="ai">${q[0]} <input data-gt="${i}_${j}"> ${q[1]}</div>`).join('')}
+  <div><button class="btn main" data-gtc="${i}">Тексеру</button></div><div class="r" id="gtr${i}"></div></div>`).join('');
+  GT.forEach((g,i)=>gtShow(i)); }
+function gtShow(i){ const s=GTS[i]; const r=$('gtr'+i); if(!s){ r.textContent=''; return; }
+  if(s.done&&s.ok) r.innerHTML='<span class="good">✔ Дұрыс! Топқа +2</span>';
+  else if(s.done) r.innerHTML='<span class="bad">Жауабы: '+GT[i].q.map(q=>q[0]+' '+nf(q[2],4)+' '+q[1]).join('; ')+'</span>';
+  else r.innerHTML='<span class="bad">✘ Тағы 1 мүмкіндік</span>'; }
+$('gtRow').addEventListener('click',e=>{ const b=e.target.closest('[data-gtc]'); if(!b) return; const i=+b.dataset.gtc; const s=GTS[i]=GTS[i]||{t:0,done:false,ok:false}; if(s.done) return;
+  const ok=GT[i].q.every((q,j)=>near(parseNum(document.querySelector(`[data-gt="${i}_${j}"]`).value),q[2]));
+  s.t++; if(ok){ s.done=true; s.ok=true; addGS(i,2); SND.ok(); } else { SND.bad(); if(s.t>=2) s.done=true; }
+  store.set('kl_gt',GTS); gtShow(i); });
+gtBuild();
+
+
+
+/* 12. Өмір */
+LABS.cLife={t:0,frame(ctx,w,h,dt){ this.t+=dt; ctx.fillStyle='#efe9da'; ctx.fillRect(0,0,w,h); table_(ctx,w,h,190);
+  const bars=[['1 л',60,'#7fb6e6'],['1 галлон ≈ 3,8 л',96,'#d9a441'],['1 баррель ≈ 159 л',150,'#6b5a4a']]; let x=80;
+  for(const [t,hh,c] of bars){ const wd=hh*.7; ctx.fillStyle=c; rr(ctx,x-wd/2,190-hh,wd,hh,8); ctx.fill(); ctx.strokeStyle='rgba(0,0,0,.3)'; ctx.lineWidth=1.5; ctx.stroke(); if(hh>120){ ctx.strokeStyle='rgba(255,255,255,.45)'; [.25,.5,.75].forEach(k=>{ ctx.beginPath(); ctx.moveTo(x-wd/2,190-hh*k); ctx.lineTo(x+wd/2,190-hh*k); ctx.stroke(); }); } label(ctx,t,x,214,'#fff',15,'center',true); x+=wd/2+110; }
+  // колонка
+  const px=650; ctx.fillStyle='#2d5f4f'; rr(ctx,px-55,30,110,160,8); ctx.fill(); ctx.fillStyle='#1e2a22'; rr(ctx,px-42,46,84,44,4); ctx.fill();
+  const v=Math.min(40,(this.t%7)*10); label(ctx,nf(v,1)+' л',px,76,'#8ff0a4',24,'center',true,'Consolas, monospace');
+  ctx.fillStyle='#d9dde2'; ctx.fillRect(px-30,105,60,30); label(ctx,'поверка ✓',px,172,'#f6d77a',14,'center',true);
+  ctx.strokeStyle='#222'; ctx.lineWidth=5; ctx.beginPath(); ctx.moveTo(px+55,90); ctx.quadraticCurveTo(px+110,110,px+90,170); ctx.stroke(); }};
+
+/* 13. Станциялар */
+const STN=[
+  {dev:'block',t:'Сызғыш және мензурка',
+   task:'Ағаш <b>білеушенің</b> көлемін екі әдіспен тап.<br>1) «Сызғыш»: a, b, c-ны өлше, V = abc есепте.<br>2) «Мензурка»: білеушені батыр. Ол <b>қалқиды</b>! «Инемен батыр» түймесін бас, V₁ мен V₂-ні оқы.',
+   rows:[{n:'Өлшемдері',f:[['a','см',6],['b','см',2],['c','см',2.5]]},{n:'Сызғышпен: V = abc',f:[['V','см³',30]]},{n:'Мензуркамен (инемен)',f:[['V₁','мл',50],['V₂','мл',80],['V','см³',30]]},{n:'м³-пен жаз',f:[['V','м³',.00003]]}]},
+  {dev:'dip',t:'Ығыстыру әдісі',
+   task:'Денені таңда, жіптен сүйреп немесе түймемен суға <b>толық</b> батыр. V₁ мен V₂-ні шкаладан оқы, дененің көлемін V = V₂ − V₁ бойынша тап. Соңында бөлік құны мен қателікті жаз.',
+   rows:[{n:'Тас',f:[['V₁','мл',50],['V₂','мл',74],['V','см³',24]]},{n:'🗝 Кілт',f:[['V₁','мл',50],['V₂','мл',58],['V','см³',8]]},{n:'⚙ Металл цилиндр',f:[['V₁','мл',50],['V₂','мл',65],['V','см³',15]]},{n:'Мензурка',f:[['Б.Қ.','мл',1],['ΔV','мл',.5]]}]},
+  {dev:'ovf',t:'Құйғыш ыдыс',
+   task:'Бұл денелер мензуркаға <b>сыймайды</b>. Құйғыш ыдысты толтыр (сумен шүмегіне дейін), денені батыр. Ағып шыққан судың көлемін мензуркадан оқы – ол дененің көлеміне тең.',
+   rows:[{n:'🥔 Картоп',f:[['V','см³',120]]},{n:'🍎 Алма',f:[['V','см³',150]]},{n:'Үлкен тас',f:[['V','см³',90]]},{n:'Мензурка',f:[['Б.Қ.','мл',10],['ΔV','мл',5]]}]},
+];
+const STB={mode:'ruler',edge:0,d:mkDip(CYL[0],[{k:'wood',n:'Білеуше',V:30,h:72,fl:.6}])};
+const BLK=[6,2,2.5], BLKN=['a (ұзындығы)','b (ені)','c (биіктігі)'];
+const STG=mkDip(CYL[0],[{k:'stone',n:'Тас',V:24,h:42},{k:'key',n:'🗝 Кілт',V:8,h:56},{k:'metal',n:'⚙ Металл цилиндр',V:15,h:60}]);
+const OVB=[{k:'potato',n:'🥔 Картоп',V:120,h:60},{k:'apple',n:'🍎 Алма',V:150,h:68},{k:'bigstone',n:'Үлкен тас',V:90,h:60}];
+const OV={o:0,y:null,tgt:0,out:0,f:0,cfg:CYL[1],flow:false};
+let PTD=store.get('kl_pt',[{},{},{}]), PTP=store.get('kl_ptp',[{},{},{}]), ptG=0;
+const PTM={left:[180,180,180],run:false,last:0};
+function ptTabs(){ $('ptTabs').innerHTML=STN.map((g,i)=>{ const n=Object.keys(PTP[i]).length; return `<button class="ptab${i===ptG?' on':''}" data-g="${i}" style="border-color:${GR[i].c};${i===ptG?'background:'+GR[i].c:'color:'+GR[i].c}">${GR[i].n} топ<small>${g.t} · ${n}/4 ұпай${n===4?' ✔':''}</small></button>`; }).join(''); }
+$('ptTabs').addEventListener('click',e=>{ const b=e.target.closest('[data-g]'); if(!b) return; PTM.run=false; ptG=+b.dataset.g; ptBuild(); SND.page(); });
+function ovReset(){ OV.y=null; OV.tgt=0; OV.out=0; OV.f=0; }
+function ptBuild(){ const G=STN[ptG], c=GR[ptG].c; ptTabs();
+  $('ptTH').innerHTML=`<span style="color:${c}">${GR[ptG].n} топ · ${G.t}</span>`; $('ptTask').innerHTML=G.task;
+  const C=$('ptCtl'); C.innerHTML='';
+  if(G.dev==='block'){
+    C.innerHTML=`<div class="objs"><button class="btn" id="sbR">📏 Сызғыш</button><button class="btn" id="sbM">🧪 Мензурка</button><span style="width:14px"></span><span id="sbX" class="objs"></span></div>`;
+    const X=$('sbX'); const paint=()=>{ $('sbR').classList.toggle('on',STB.mode==='ruler'); $('sbM').classList.toggle('on',STB.mode==='cyl');
+      if(STB.mode==='ruler'){ X.innerHTML=BLKN.map((n,i)=>`<button class="btn${i===STB.edge?' on':''}" data-e="${i}">${n}</button>`).join(''); X.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>{ STB.edge=+b.dataset.e; paint(); SND.page(); }); }
+      else { X.innerHTML=`<button class="btn main" id="sbIn">⬇ Батыру</button><button class="btn" id="sbOut">⬆ Шығару</button><button class="btn${STB.d.needle?' on':''}" id="sbN">📍 Инемен батыр</button>`; $('sbIn').onclick=()=>{ STB.d.tgt=1; }; $('sbOut').onclick=()=>{ STB.d.tgt=0; STB.d.needle=false; paint(); }; $('sbN').onclick=()=>{ STB.d.needle=!STB.d.needle; if(STB.d.needle) STB.d.tgt=1; paint(); }; } };
+    $('sbR').onclick=()=>{ STB.mode='ruler'; paint(); }; $('sbM').onclick=()=>{ STB.mode='cyl'; paint(); }; paint(); }
+  else if(G.dev==='dip'){
+    C.innerHTML='<div class="objs" id="sgO"></div><div class="objs"><button class="btn main" id="sgIn">⬇ Батыру</button><button class="btn" id="sgOut">⬆ Шығару</button></div>';
+    STG.bodies.forEach((b,i)=>{ const x=document.createElement('button'); x.className='btn'+(i===STG.o?' on':''); x.textContent=b.n; x.onclick=()=>{ STG.o=i; STG.tgt=0; STG.y=null; STG.lv=STG.V1; [...$('sgO').children].forEach((q,j)=>q.classList.toggle('on',j===i)); }; $('sgO').appendChild(x); });
+    $('sgIn').onclick=()=>{ STG.tgt=1; }; $('sgOut').onclick=()=>{ STG.tgt=0; }; }
+  else {
+    C.innerHTML='<div class="objs" id="soO"></div><div class="objs"><button class="btn main" id="soIn">⬇ Батыру</button><button class="btn" id="soRe">💧 Құйғышты толтыр, мензурканы босат</button></div>';
+    OVB.forEach((b,i)=>{ const x=document.createElement('button'); x.className='btn'+(i===OV.o?' on':''); x.textContent=b.n; x.onclick=()=>{ OV.o=i; ovReset(); [...$('soO').children].forEach((q,j)=>q.classList.toggle('on',j===i)); }; $('soO').appendChild(x); });
+    $('soIn').onclick=()=>{ OV.tgt=1; }; $('soRe').onclick=()=>{ ovReset(); SND.spin(); }; }
+  const d=PTD[ptG], P=PTP[ptG]; let h='<tr><th>Өлшеу</th><th>Нәтиже</th></tr>';
+  G.rows.forEach((r,i)=>{ h+=`<tr><td class="l">${r.n}</td><td class="l ${P['r'+i]?'ok':''}" style="white-space:nowrap">`+r.f.map((f,j)=>`${f[0]} = <input data-k="${i}_${j}" style="width:${f[1]==='м³'?104:62}px" value="${d[i+'_'+j]??''}"> ${f[1]}`).join(' &nbsp;')+'</td></tr>'; });
+  $('ptTab').innerHTML=h;
+  $('ptTab').querySelectorAll('input').forEach(inp=>inp.oninput=()=>{ PTD[ptG][inp.dataset.k]=inp.value; store.set('kl_pt',PTD); rsBuild(); });
+  $('ptRes').innerHTML=''; ptTm(); fitSlide(slides[cur]); }
+$('ptChk').onclick=()=>{ const G=STN[ptG], d=PTD[ptG], P=PTP[ptG]; let got=0,bad=0;
+  G.rows.forEach((r,i)=>{ const any=r.f.some((f,j)=>(d[i+'_'+j]??'')!==''); if(!any) return; const ok=r.f.every((f,j)=>near(parseNum(d[i+'_'+j]??''),f[2])); if(ok){ if(!P['r'+i]){ P['r'+i]=1; got++; } } else bad++; });
+  store.set('kl_ptp',PTP); if(got){ addGS(ptG,got); SND.ok(); } else if(bad) SND.bad(); const n=Object.keys(P).length; ptBuild();
+  $('ptRes').innerHTML=(got?`<span class="good">✔ +${got} ұпай</span> `:'')+(bad?`<span class="bad">✘ ${bad} жол қате – тексеріп, түзет</span> `:'')+`<b>${n}/4</b>`+(n===4?' <span class="good">Станция орындалды!</span>':''); rsBuild(); };
+function drawOvf(ctx,w,h,dt){ const b=OVB[OV.o], floor=322, spY=150, vx=70,vw=190, S=.11; ctx.fillStyle='#efe9da'; ctx.fillRect(0,0,w,h); table_(ctx,w,h,344);
+  const outY=spY-14; if(OV.y===null) OV.y=outY; const ty=OV.tgt?floor:outY, sp=120*dt; OV.y+=Math.max(-sp,Math.min(sp,ty-OV.y));
+  const surf=spY+Math.max(0,OV.out-OV.f*b.V)*S; const f=Math.max(0,Math.min(1,(OV.y-surf)/b.h)); OV.f=f; const want=f*b.V; OV.flow=OV.out<want-.2; if(OV.flow) OV.out+=Math.min(45*dt,want-OV.out);
+  // тұрған су
+  ctx.fillStyle='rgba(255,255,255,.4)'; ctx.fillRect(vx,90,vw,240); ctx.strokeStyle='#6a5a44'; ctx.lineWidth=1.3; ctx.beginPath(); ctx.moveTo(vx+vw/2,0); ctx.lineTo(vx+vw/2,OV.y-b.h+2); ctx.stroke(); OBJ[b.k](ctx,vx+vw/2,OV.y,1);
+  ctx.fillStyle='rgba(78,150,222,.55)'; ctx.fillRect(vx,surf,vw,330-surf);
+  ctx.strokeStyle='#44576a'; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(vx,84); ctx.lineTo(vx,330); ctx.lineTo(vx+vw,330); ctx.lineTo(vx+vw,spY+7); ctx.lineTo(vx+vw+105,spY+30); ctx.moveTo(vx+vw,84); ctx.lineTo(vx+vw,spY-7); ctx.lineTo(vx+vw+105,spY+14); ctx.stroke();
+  label(ctx,'құйғыш ыдыс',vx+vw/2,357,'#fff',14,'center',true);
+  const G=cylG(vx+vw+115,335,235,86,OV.cfg);
+  if(OV.flow){ ctx.strokeStyle='rgba(78,150,222,.9)'; ctx.lineWidth=5; ctx.beginPath(); ctx.moveTo(vx+vw+105,spY+24); ctx.quadraticCurveTo(G.x+6,spY+34,G.x+6,G.py(OV.out)); ctx.stroke(); }
+  drawCyl(ctx,G,OV.out); drawLens(ctx,G,OV.out,540,18,285,290); }
+LABS.cSt={frame(ctx,w,h,dt){ const G=STN[ptG];
+  if(G.dev==='dip'){ dipStep(STG,dt); dipDraw(ctx,w,h,STG); }
+  else if(G.dev==='ovf') drawOvf(ctx,w,h,dt);
+  else if(STB.mode==='cyl'){ dipStep(STB.d,dt); dipDraw(ctx,w,h,STB.d); }
+  else { ctx.fillStyle='#efe9da'; ctx.fillRect(0,0,w,h); table_(ctx,w,h,344);
+    // изометриялық білеуше
+    const u=30,ox=150,oy=140,[a,b,c]=BLK; const P=(x,y,z)=>isoP(ox,oy,u,x,y,z); const f=(pts,col)=>{ ctx.fillStyle=col; ctx.beginPath(); pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath(); ctx.fill(); ctx.strokeStyle='#8a6a3a'; ctx.lineWidth=1.5; ctx.stroke(); };
+    f([P(0,b,0),P(a,b,0),P(a,b,c),P(0,b,c)],'#b5874c'); f([P(a,0,0),P(a,b,0),P(a,b,c),P(a,0,c)],'#c79a5a'); f([P(0,0,c),P(a,0,c),P(a,b,c),P(0,b,c)],'#dcb57a');
+    const E=[[P(0,b,0),P(a,b,0)],[P(a,0,0),P(a,b,0)],[P(a,b,0),P(a,b,c)]][STB.edge]; ctx.strokeStyle='#b8442f'; ctx.lineWidth=5; ctx.beginPath(); ctx.moveTo(E[0][0],E[0][1]); ctx.lineTo(E[1][0],E[1][1]); ctx.stroke();
+    label(ctx,BLKN[STB.edge],150,330,'#fff',19,'center',true);
+    // сызғыш
+    const rx=380,ry=210,cm=52,L=BLK[STB.edge]; ctx.fillStyle=['#dcb57a','#c79a5a','#b5874c'][STB.edge]; ctx.fillRect(rx,ry-82,L*cm,82); ctx.strokeStyle='#8a6a3a'; ctx.lineWidth=2; ctx.strokeRect(rx,ry-82,L*cm,82); ctx.strokeStyle='#b8442f'; ctx.lineWidth=5; ctx.beginPath(); ctx.moveTo(rx,ry); ctx.lineTo(rx+L*cm,ry); ctx.stroke();
+    ctx.fillStyle='#f1d98f'; ctx.fillRect(rx-14,ry,8*cm+28,64); ctx.strokeStyle='#8f7224'; ctx.lineWidth=1.5; ctx.strokeRect(rx-14,ry,8*cm+28,64);
+    for(let i=0;i<=80;i++){ const X=rx+i*cm/10; ctx.lineWidth=i%10===0?2:1; ctx.strokeStyle='#3a2a08'; ctx.beginPath(); ctx.moveTo(X,ry); ctx.lineTo(X,ry+(i%10===0?30:i%5===0?22:14)); ctx.stroke(); if(i%10===0) label(ctx,String(i/10),X,ry+52,'#3a2a08',17,'center',true); }
+    label(ctx,'см',rx+8*cm+2,ry+52,'#3a2a08',13,'right',true); label(ctx,'Бөлік құны: 1 мм',rx,ry-96,'#6a6658',15,'left',true); } }};
+function ptTm(){ const sec=Math.ceil(PTM.left[ptG]); $('ptTm').textContent=String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0'); $('ptTm').classList.toggle('low',sec<=30); $('ptGo').textContent=PTM.run?'⏸':'▶'; }
+$('ptGo').onclick=()=>{ if(PTM.left[ptG]<=0) return; PTM.run=!PTM.run; PTM.last=performance.now(); ptTm(); };
+$('ptRe').onclick=()=>{ PTM.run=false; PTM.left[ptG]=180; ptTm(); };
+$('ptClr').onclick=()=>{ if(!confirm(GR[ptG].n+' топтың станциядағы нәтижесі өшеді. Жалғастырамыз ба?')) return; PTD[ptG]={}; PTP[ptG]={}; store.set('kl_pt',PTD); store.set('kl_ptp',PTP); PTM.left[ptG]=180; PTM.run=false; ptBuild(); rsBuild(); };
+setInterval(()=>{ if(!PTM.run) return; const now=performance.now(), prev=Math.ceil(PTM.left[ptG]); PTM.left[ptG]-=(now-PTM.last)/1000; PTM.last=now; const c=Math.ceil(PTM.left[ptG]);
+  if(c!==prev&&c<=5&&c>0) SND.beep(); if(PTM.left[ptG]<=0){ PTM.left[ptG]=0; PTM.run=false; SND.bell(); toast('Уақыт бітті! Келесі топ шықсын.'); } if(c!==prev||PTM.left[ptG]<=0) ptTm(); },200);
+dipPointer('cSt',()=>{ const G=STN[ptG]; return G.dev==='dip'?STG:(G.dev==='block'&&STB.mode==='cyl'?STB.d:null); });
+
+/* 14. Нәтижелер */
+function rsBuild(){ const v=(g,i,j)=>{ const x=parseNum(PTD[g][i+'_'+j]??''); return isFinite(x)?nf(x,6):'—'; };
+  let h='<tr>'+STN.map((g,i)=>`<th style="color:${GR[i].c}" colspan="2">${GR[i].n} топ · ${g.t}</th>`).join('')+'</tr>';
+  const R=[[['Білеуше: V = abc',1,0,'см³'],['Мензуркамен',2,2,'см³'],['м³-пен',3,0,'м³'],['Мензурка: V₂',2,1,'мл']],[['Тас',0,2,'см³'],['Кілт',1,2,'см³'],['Цилиндр',2,2,'см³'],['Б.Қ.',3,0,'мл']],[['Картоп',0,0,'см³'],['Алма',1,0,'см³'],['Үлкен тас',2,0,'см³'],['Б.Қ.',3,0,'мл']]];
+  for(let k=0;k<4;k++){ h+='<tr>'+R.map((col,g)=>`<td class="l">${col[k][0]}</td><td style="font-size:19px"><b>${v(g,col[k][1],col[k][2])}</b> ${col[k][3]}</td>`).join('')+'</tr>'; }
+  h+='<tr>'+STN.map((g,i)=>`<td class="l">Станция ұпайы</td><td><b>${Object.keys(PTP[i]).length} / 4</b></td>`).join('')+'</tr>';
+  $('rsTab').innerHTML=h; }
+
+/* 16. ФС: аквариум */
+const AQ={ready:false,yaw:.62,pitch:.32,auto:true,zoom:false,n:0,hT:20,h:20,spill:0,stones:[]};
+const AQS=.02;   // 1 см = 0,02 бірлік
+function aqInit(){ if(AQ.ready) return; if(!window.THREE){ AQ.ready='no'; c3NoThree($('aq3d')); return; } AQ.ready=true;
+  const o=c3Base($('aq3d'),0xe6e0d0), T=o.T; AQ.o=o;
+  const W=50*AQS,D=30*AQS,H=30*AQS;
+  const tb=new T.Mesh(new T.BoxGeometry(W+.5,.05,D+.4),new T.MeshStandardMaterial({color:0x9a6b40,roughness:.8})); tb.position.y=-.03; o.S.add(tb);
+  const gravel=new T.Mesh(new T.BoxGeometry(W-.005,.002,D-.005),new T.MeshStandardMaterial({color:0xcbb88f})); gravel.position.y=.002; o.S.add(gravel);
+  AQ.water=new T.Mesh(new T.BoxGeometry(W-.006,1,D-.006),new T.MeshStandardMaterial({color:0x4f9fe0,transparent:true,opacity:.42,roughness:.15,depthWrite:false})); o.S.add(AQ.water);
+  const glass=new T.Mesh(new T.BoxGeometry(W,H,D),new T.MeshStandardMaterial({color:0xcfe6f2,transparent:true,opacity:.14,roughness:.05,depthWrite:false})); glass.position.y=H/2; o.S.add(glass);
+  const edges=new T.LineSegments(new T.EdgesGeometry(new T.BoxGeometry(W,H,D)),new T.LineBasicMaterial({color:0x35505f})); edges.position.y=H/2; o.S.add(edges);
+  // шкала (сантиметрлік)
+  const tc=document.createElement('canvas'); tc.width=128; tc.height=1024; const g=tc.getContext('2d'); g.fillStyle='#fffdf4'; g.fillRect(0,0,128,1024); g.fillStyle='#1d2430'; const p=1024/30;
+  for(let k=0;k<=30;k++){ const y=1024-k*p; const big=k%5===0; g.fillRect(0,Math.min(1021,y-(big?3:1.5)),big?64:36,big?6:3); if(big&&k>0&&k<30){ g.font='700 44px Segoe UI'; g.textAlign='right'; g.fillText(String(k),124,y+16); } }
+  const tex=new T.CanvasTexture(tc); tex.anisotropy=4; const sc=new T.Mesh(new T.PlaneGeometry(.075,H),new T.MeshStandardMaterial({map:tex,roughness:.7})); sc.position.set(W/2-.045,H/2,D/2+.002); o.S.add(sc); AQ.sc=sc;
+  // өсімдік және балықтар
+  const pl=new T.MeshStandardMaterial({color:0x2e7d4f,roughness:.8}); [[-.38,-.18],[-.3,-.2],[.05,-.22],[.14,-.2]].forEach(([x,z],i)=>{ const m=new T.Mesh(new T.ConeGeometry(.018,.14+i*.03,6),pl); m.position.set(x,.07+i*.015,z); o.S.add(m); });
+  AQ.fish=[0xf28c28,0xd9443a,0xf2c230].map((c,i)=>{ const f=new T.Group(); const mat=new T.MeshStandardMaterial({color:c,roughness:.4}); const b=new T.Mesh(new T.SphereGeometry(.024,14,10),mat); b.scale.set(1.5,.85,.6); f.add(b); const t=new T.Mesh(new T.ConeGeometry(.016,.03,8),mat); t.rotation.z=-Math.PI/2; t.position.x=-.044; f.add(t); o.S.add(f); return {f,ph:i*2.1,z:-.1+i*.1,y:.12+i*.07}; });
+  AQ.pud=new T.Mesh(new T.CircleGeometry(.5,32),new T.MeshStandardMaterial({color:0x4f9fe0,transparent:true,opacity:.5})); AQ.pud.rotation.x=-Math.PI/2; AQ.pud.position.set(W/2+.02,.002,0); AQ.pud.scale.set(.001,.001,1); o.S.add(AQ.pud);
+  AQ.lbl=c3Label(T,'h = ? см','#1f5fa8'); o.S.add(AQ.lbl); AQ.lbl.visible=false;
+  c3Orbit($('aq3d'),AQ); }
+function aqStone(){ const T=AQ.o.T, i=AQ.stones.length, m=new T.Mesh(new T.DodecahedronGeometry(.052,0),new T.MeshStandardMaterial({color:0x7d7a73,roughness:.9,flatShading:true})); const col=i%3, row=Math.floor(i/3); const x=-.15+col*.14+.04*row, z=.07-row*.11; m.position.set(x,.75,z); m.rotation.set(i,i*2,i*.5); AQ.o.S.add(m); AQ.stones.push({m,x,z,v:0,land:.046+row*.0,wet:false}); }
+SC3D.aq3d=function(dt){ if(!AQ.ready) aqInit(); if(AQ.ready!==true) return; const o=AQ.o, W=50*AQS, D=30*AQS;
+  AQ.stones.forEach(s=>{ if(s.m.position.y>s.land){ s.v+=(s.m.position.y>AQ.h*AQS?1.4:.35)*dt; s.v=Math.min(s.v,s.m.position.y>AQ.h*AQS?1.2:.28); s.m.position.y=Math.max(s.land,s.m.position.y-s.v*dt); if(!s.wet&&s.m.position.y<AQ.h*AQS){ s.wet=true; AQ.hT+=2; SND.spin(); if(AQ.hT>30){ AQ.spill+=AQ.hT-30; AQ.hT=30; toast('Су төгіліп кетті! Аквариум толды.'); SND.bad(); } } } });
+  AQ.h+=(AQ.hT-AQ.h)*Math.min(1,dt*3); AQ.water.scale.y=AQ.h*AQS; AQ.water.position.y=AQ.h*AQS/2;
+  const k=Math.min(1,AQ.spill/6); AQ.pud.scale.set(k*.8+.001,k*.5+.001,1);
+  const t=performance.now()/1000; AQ.fish.forEach(F=>{ const X=Math.sin(t*.5+F.ph)*.36; F.f.position.set(X,Math.min(F.y,AQ.h*AQS-.04)+Math.sin(t*1.3+F.ph)*.012,F.z); F.f.rotation.y=Math.cos(t*.5+F.ph)>=0?0:Math.PI; });
+  if(AQ.auto) AQ.yaw=.62+Math.sin(t/5)*.22;
+  const tgt=AQ.zoom?new o.T.Vector3(W/2-.05,AQ.h*AQS,D/2):new o.T.Vector3(0,.26,0), dist=AQ.zoom?.46:2.3; c3Cam(o,AQ,tgt,dist); o.R.render(o.S,o.C); };
+$('aqGo').onclick=()=>{ if(AQ.ready!==true) return; if(AQ.stones.length>=9){ toast('Тас жетеді!'); return; } aqStone(); $('aqGo').textContent='Тағы бір тас салу'; };
+$('aqZoom').onclick=()=>{ AQ.zoom=!AQ.zoom; AQ.auto=false; if(AQ.zoom){ AQ.yaw=0; AQ.pitch=.03; } else { AQ.yaw=.62; AQ.pitch=.32; AQ.auto=true; } $('aqZoom').textContent=AQ.zoom?'🔭 Алыстату':'🔍 Шкаланы жақындату'; };
+$('aqRe').onclick=()=>{ AQ.stones.forEach(s=>AQ.o&&AQ.o.S.remove(s.m)); AQ.stones=[]; AQ.hT=20; AQ.h=20; AQ.spill=0; $('aqGo').textContent='Декор тасты салу'; };
+$('aqChk').onclick=()=>{ const A=[['aqA',45],['aqB',30],['aqC',22],['aqD',3],['aqE',12]], r=A.map(([i,v])=>near(parseNum($(i).value),v));
+  $('aqRes').innerHTML=r.map((ok,i)=>ok?`<span class="good">${i+1} ✔</span>`:`<span class="bad">${i+1} ✘</span>`).join(' ')+(r.every(x=>x)?' <span class="good">5 тас сыяды – 6-сы төгеді!</span>':''); if(r.every(x=>x)) SND.ok(); else SND.bad(); };
+
+/* 17. ФС: тәж, құйғыш ыдыс */
+const CRV=[60,52];
+const CR={ready:false,yaw:.35,pitch:.28,auto:true,zoom:false,o:0,y:.95,tgt:0,out:0,f:0};
+function crInit(){ if(CR.ready) return; if(!window.THREE){ CR.ready='no'; c3NoThree($('cr3d')); return; } CR.ready=true;
+  const o=c3Base($('cr3d'),0xe6e0d0), T=o.T; CR.ctx=o;
+  const tb=new T.Mesh(new T.BoxGeometry(2.6,.05,1.2),new T.MeshStandardMaterial({color:0x9a6b40,roughness:.8})); tb.position.y=-.03; o.S.add(tb);
+  const glass=new T.MeshStandardMaterial({color:0xcfe6f2,transparent:true,opacity:.22,roughness:.05,side:T.DoubleSide,depthWrite:false});
+  const wat=new T.MeshStandardMaterial({color:0x4f9fe0,transparent:true,opacity:.5,roughness:.15,depthWrite:false});
+  // құйғыш ыдыс: биіктігі .6
+  const vR=.27, vH=.62; const v=new T.Mesh(new T.CylinderGeometry(vR,vR,vH,40,1,true),glass); v.position.set(-.55,vH/2,0); o.S.add(v);
+  const vb=new T.Mesh(new T.CylinderGeometry(vR,vR,.012,40),new T.MeshStandardMaterial({color:0xa9c6d6})); vb.position.set(-.55,.006,0); o.S.add(vb);
+  const rim=new T.Mesh(new T.TorusGeometry(vR,.006,8,48),new T.MeshStandardMaterial({color:0x35505f})); rim.rotation.x=Math.PI/2; rim.position.set(-.55,vH,0); o.S.add(rim);
+  CR.vWater=new T.Mesh(new T.CylinderGeometry(vR-.004,vR-.004,1,40),wat); CR.vWater.position.x=-.55; o.S.add(CR.vWater);
+  // шүмек
+  const sp=new T.Mesh(new T.CylinderGeometry(.028,.028,.34,14),new T.MeshStandardMaterial({color:0x8fa8b5,roughness:.3})); sp.rotation.z=Math.PI/2+.22; sp.position.set(-.55+vR+.155,.44,0); o.S.add(sp); CR.spEnd=new T.Vector3(-.55+vR+.32,.40,0);
+  // мензурка: 100 мл, биіктігі .8
+  const mR=.085, mH=.8, mx=.0+.26; const m=new T.Mesh(new T.CylinderGeometry(mR,mR,mH,28,1,true),glass); m.position.set(mx,mH/2,0); o.S.add(m);
+  const mb=new T.Mesh(new T.CylinderGeometry(mR+.04,mR+.04,.014,28),new T.MeshStandardMaterial({color:0x8fa0ad})); mb.position.set(mx,.007,0); o.S.add(mb);
+  CR.mWater=new T.Mesh(new T.CylinderGeometry(mR-.004,mR-.004,1,28),wat); CR.mWater.position.x=mx; o.S.add(CR.mWater); CR.mx=mx; CR.mH=mH;
+  const tc=document.createElement('canvas'); tc.width=256; tc.height=1600; const g=tc.getContext('2d'); g.fillStyle='#fffdf4'; g.fillRect(0,0,256,1600); g.fillStyle='#1d2430'; const p=1600/100;
+  for(let k=0;k<=100;k+=2){ const y=1600-k*p; const big=k%10===0; g.fillRect(0,Math.max(0,Math.min(1596,y-(big?3:1.5))),big?120:70,big?6:3); if(big&&k>0&&k<100){ g.font='700 64px Segoe UI'; g.textAlign='right'; g.fillText(String(k),250,y+24); } }
+  g.font='700 44px Segoe UI'; g.textAlign='right'; g.fillText('мл',250,50);
+  const tex=new T.CanvasTexture(tc); tex.anisotropy=4; const sc=new T.Mesh(new T.PlaneGeometry(.11,mH),new T.MeshStandardMaterial({map:tex,roughness:.7})); sc.position.set(mx+mR+.066,mH/2,0); o.S.add(sc);
+  const ptr=new T.Mesh(new T.BoxGeometry(.05,.004,.004),new T.MeshBasicMaterial({color:0x1f5fa8})); o.S.add(ptr); CR.ptr=ptr;
+  CR.stream=new T.Mesh(new T.CylinderGeometry(.008,.008,1,8),new T.MeshStandardMaterial({color:0x4f9fe0,transparent:true,opacity:.8})); o.S.add(CR.stream); CR.stream.visible=false;
+  // тәж және алтын кесегі
+  const gold=new T.MeshStandardMaterial({color:0xe0b23a,metalness:.75,roughness:.28});
+  const cw=new T.Group(); const band=new T.Mesh(new T.TorusGeometry(.115,.022,12,36),gold); band.rotation.x=Math.PI/2; cw.add(band);
+  const band2=new T.Mesh(new T.CylinderGeometry(.115,.115,.05,36,1,true),new T.MeshStandardMaterial({color:0xe0b23a,metalness:.75,roughness:.28,side:T.DoubleSide})); band2.position.y=.022; cw.add(band2);
+  for(let i=0;i<8;i++){ const a=i/8*Math.PI*2, c=new T.Mesh(new T.ConeGeometry(.024,.09,8),gold); c.position.set(Math.cos(a)*.115,.09,Math.sin(a)*.115); cw.add(c); const b=new T.Mesh(new T.SphereGeometry(.011,8,8),new T.MeshStandardMaterial({color:i%2?0xc0392b:0x2d6fb5,roughness:.3})); b.position.set(Math.cos(a)*.115,.138,Math.sin(a)*.115); cw.add(b); }
+  const bar=new T.Mesh(new T.BoxGeometry(.2,.09,.11),gold);
+  CR.bodies=[cw,bar]; CR.bodies.forEach(b=>o.S.add(b)); bar.visible=false; CR.hb=[.15,.09];
+  CR.thread=new T.Mesh(new T.CylinderGeometry(.0025,.0025,1,6),new T.MeshStandardMaterial({color:0x444444})); o.S.add(CR.thread);
+  CR.lbl=c3Label(T,'көлем ?','#1f5fa8'); o.S.add(CR.lbl); CR.lbl.visible=false;
+  c3Orbit($('cr3d'),CR); }
+const CR_SP=.40;   // шүмек деңгейі
+SC3D.cr3d=function(dt){ if(!CR.ready) crInit(); if(CR.ready!==true) return; const o=CR.ctx, hb=CR.hb[CR.o];
+  const low=.02+hb*0, up=.62+.14; const ty=CR.tgt?low:up, sp=.17*dt; CR.y+=Math.max(-sp,Math.min(sp,ty-CR.y)); if(CR.y>up) CR.y=up;
+  const body=CR.bodies[CR.o]; body.position.set(-.55,CR.y+(CR.o?hb/2:.02),0);
+  CR.thread.scale.y=1.4-(CR.y+hb); CR.thread.position.set(-.55,(CR.y+hb+1.4)/2,0);
+  const V=CRV[CR.o], f=Math.max(0,Math.min(1,(CR_SP-CR.y)/hb)), want=f*V; const flowing=CR.out<want-.15; if(flowing) CR.out=Math.min(want,CR.out+14*dt);
+  // суды көрсету
+  const vh=CR_SP-Math.max(0,CR.out-want)*.0009; CR.vWater.scale.y=vh; CR.vWater.position.y=vh/2;
+  const mh=Math.max(.0005,CR.out/100*CR.mH); CR.mWater.scale.y=mh; CR.mWater.position.y=mh/2; CR.ptr.position.set(CR.mx+.1,mh,0.005);
+  CR.stream.visible=flowing; if(flowing){ const a=CR.spEnd, bx=CR.mx-.02, by=mh; const dx=bx-a.x, dy=by-a.y, L=Math.hypot(dx,dy); CR.stream.scale.y=L; CR.stream.position.set((a.x+bx)/2,(a.y+by)/2,0); CR.stream.rotation.z=Math.atan2(dy,dx)-Math.PI/2; }
+  if(CR.auto) CR.yaw=.3+Math.sin(performance.now()/5000)*.2;
+  const tgt=CR.zoom?new o.T.Vector3(CR.mx+.06,mh,0):new o.T.Vector3(-.14,.46,0), dist=CR.zoom?.62:2.15; c3Cam(o,CR,tgt,dist); o.R.render(o.S,o.C); };
+function crReset(){ CR.y=.76; CR.tgt=0; CR.out=0; $('crGo').textContent='⬇ Батыру'; }
+function crPick(i){ CR.o=i; if(CR.ready===true) CR.bodies.forEach((b,j)=>b.visible=j===i); crReset(); $('crB0').classList.toggle('on',i===0); $('crB1').classList.toggle('on',i===1); SND.page(); }
+$('crB0').onclick=()=>crPick(0); $('crB1').onclick=()=>crPick(1);
+$('crGo').onclick=()=>{ if(CR.tgt){ crReset(); return; } CR.tgt=1; $('crGo').textContent='↺ Қайта толтыру'; };
+$('crZoom').onclick=()=>{ CR.zoom=!CR.zoom; CR.auto=false; if(CR.zoom){ CR.yaw=-.02; CR.pitch=.02; } else { CR.yaw=.3; CR.pitch=.28; CR.auto=true; } $('crZoom').textContent=CR.zoom?'🔭 Алыстату':'🔍 Мензурка'; };
+$('crChk').onclick=()=>{ const a=near(parseNum($('crA').value),60), b=near(parseNum($('crB').value),52), c=near(parseNum($('crC').value),8);
+  $('crRes').innerHTML=(a?'<span class="good">1 ✔</span>':'<span class="bad">1 ✘</span>')+' '+(b?'<span class="good">2 ✔</span>':'<span class="bad">2 ✘</span>')+' '+(c?'<span class="good">3 ✔</span>':'<span class="bad">3 ✘</span>'); if(a&&b&&c) SND.ok(); else SND.bad(); };
+document.querySelectorAll('[data-cq]').forEach(b=>b.onclick=()=>{ const y=b.dataset.cq==='1'; $('crQ').innerHTML=y?'<span class="good">✔ Дұрыс!</span> Массасы бірдей болса да, тәждің көлемі <b>8 см³-ке артық</b>. Демек зергер алтынға жеңілірек металл (күміс) араластырған. Мұны келесі сабақта <b>тығыздық</b> арқылы түсіндіреміз.':'<span class="bad">✘ Ойлан:</span> массасы бірдей таза алтындардың көлемі де бірдей болуы керек еді. Сенің өлшеулеріңде солай ма?'; if(y) SND.ok(); else SND.bad(); });
+
+/* 18. Сурет */
+LABS.cTaskB={frame(ctx,w,h,dt){ ctx.fillStyle='#efe9da'; ctx.fillRect(0,0,w,h); table_(ctx,w,h,194); const cfg={max:100,dig:20,n:4};
+  const A=cylG(230,186,172,76,cfg), B=cylG(560,186,172,76,cfg); drawCyl(ctx,A,50); drawCyl(ctx,B,70,()=>{ ctx.strokeStyle='#6a5a44'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(B.x,0); ctx.lineTo(B.x,158); ctx.stroke(); OBJ.stone(ctx,B.x,183,.72); });
+  label(ctx,'1',A.x+76,60,'#1d2430',26,'center',true,'Georgia, serif'); label(ctx,'2',B.x+76,60,'#1d2430',26,'center',true,'Georgia, serif'); ctx.fillStyle='#6a6658'; ctx.font='700 40px Georgia'; ctx.fillText('→',360,110); }};
+
+/* 21. Соңы */
+LABS.cEnd={t:0,frame(ctx,w,h,dt){ this.t+=dt; ctx.fillStyle='#efe9da'; ctx.fillRect(0,0,w,h); table_(ctx,w,h,122);
+  [['stone',.8],['nut',.9],['key',.8],['metal',.75],['crown',.75],['apple',.65],['wood',.72]].forEach(([o,s],i)=>{ const x=70+i*115, b=Math.abs(Math.sin(this.t*2+i))*10; OBJ[o](ctx,x,122-b,s); }); }};
+/* 15. Дуэль: ХБЖ */
+const DPOOL=[
+  ['1 л = ? мл',1000],['2 л = ? мл',2000],['250 мл = ? л',.25],['1,5 л = ? мл',1500],['1 мл = ? см³',1],['1 л = ? дм³',1],
+  ['1 дм³ = ? см³',1000],['2 дм³ = ? см³',2000],['500 см³ = ? дм³',.5],['3000 см³ = ? л',3],['1 м³ = ? дм³',1000],['1 м³ = ? л',1000],
+  ['0,5 м³ = ? л',500],['200 мл = ? см³',200],['3 км = ? м',3000],['150 см = ? м',1.5],['25 см = ? м',.25],['10 мм = ? см',1],
+  ['500 г = ? кг',.5],['1,5 кг = ? г',1500],['2 т = ? кг',2000],['2 мин = ? с',120],['1 сағ = ? мин',60],
+  ['Көлемнің ХБЖ бірлігі?','м³',['м³','л','см³','мл']],['Массаның ХБЖ бірлігі?','кг',['кг','г','т','мг']],['Ұзындықтың ХБЖ бірлігі?','м',['м','см','км','мм']],
+  ['Текшенің көлемі?','V = a³',['V = a³','V = 3a','V = a²','V = 6a']],['Параллелепипедтің көлемі?','V = abc',['V = abc','V = a+b+c','V = 2ab','V = ab']],
+  ['Ығыстыру әдісі?','V = V₂ − V₁',['V = V₂ − V₁','V = V₂ + V₁','V = V₁ · V₂','V = V₁ : V₂']],['Көлем қалай белгіленеді?','V',['V','m','S','t']]];
+const fmt=v=>typeof v==='number'?nf(v,6):v;
+function dOpts(q){ if(q[2]) return shuffle(q[2]); const a=q[1], c=new Set([a]); for(const k of shuffle([10,.1,100,.01,1000,.001,2,.5])){ if(c.size>=4) break; const v=+(a*k).toPrecision(6); if(v!==a) c.add(v); } return shuffle([...c]); }
+const D={on:false,t0:0,P:[null,null]};
+function dDeal(){ const pool=shuffle(DPOOL); D.P=[0,1].map(k=>({qs:pool.slice(k*10,k*10+10),i:0,sc:0,busy:false,done:false,time:0,cur:[]})); }
+function dRender(k){ const s=k?'B':'A', p=D.P[k]; $('sc'+s).textContent=p.sc; $('pb'+s).style.width=(p.i*10)+'%'; $('st'+s).textContent=p.done?'Аяқтады ✔':(D.on?(p.i+1)+' / 10':'');
+  if(!D.on&&!p.done){ $('q'+s).textContent='Дайынсың ба?'; $('o'+s).innerHTML=''; return; }
+  if(p.done){ $('q'+s).textContent='Жарайсың! '+p.sc+' / 10'; $('o'+s).innerHTML=''; return; }
+  const q=p.qs[p.i]; p.cur=dOpts(q); $('q'+s).textContent=q[0];
+  $('o'+s).innerHTML=p.cur.map((v,j)=>`<button class="o" data-k="${k}" data-j="${j}">${fmt(v)}</button>`).join(''); }
+function dAns(btn){ const k=+btn.dataset.k, p=D.P[k], s=k?'B':'A'; if(!D.on||p.busy||p.done) return; p.busy=true;
+  const q=p.qs[p.i], v=p.cur[+btn.dataset.j], ok=v===q[1]; const bs=[...$('o'+s).children];
+  bs.forEach((b,j)=>{ if(p.cur[j]===q[1]) b.classList.add('good'); else if(b===btn) b.classList.add('badc'); else b.classList.add('dim'); });
+  if(ok){ p.sc++; SND.ok(); } else SND.bad();
+  setTimeout(()=>{ p.i++; p.busy=false; if(p.i>=10){ p.done=true; p.time=(performance.now()-D.t0)/1000; $('t'+s).textContent=nf(p.time,1)+' с'; dEnd(); } dRender(k); }, ok?550:1000); }
+function dEnd(){ if(!(D.P[0].done&&D.P[1].done)) return; D.on=false; SND.bell();
+  const a=D.P[0], b=D.P[1], na=$('nmA').value||'1-оқушы', nb=$('nmB').value||'2-оқушы';
+  let w; if(a.sc!==b.sc) w=a.sc>b.sc?na:nb; else w=a.time<=b.time?na:nb;
+  $('dWin').textContent='🏆 '+w; $('dTxt').textContent=`${na}: ${a.sc} ұпай, ${nf(a.time,1)} с  ·  ${nb}: ${b.sc} ұпай, ${nf(b.time,1)} с`; $('dOver').style.display='flex'; }
+function dStart(){ dDeal(); D.on=true; D.t0=performance.now(); $('tA').textContent=''; $('tB').textContent=''; dRender(0); dRender(1); SND.beep(); }
+$('dGo').onclick=dStart; $('dRe').onclick=()=>{ D.on=false; dDeal(); dRender(0); dRender(1); $('tA').textContent=''; $('tB').textContent=''; };
+$('dOk').onclick=()=>{ $('dOver').style.display='none'; };
+['oA','oB'].forEach(id=>$(id).addEventListener('pointerdown',e=>{ const b=e.target.closest('.o'); if(b){ e.preventDefault(); dAns(b); } }));
+setInterval(()=>{ if(D.on) $('dClock').textContent=nf((performance.now()-D.t0)/1000,1)+' с'; },100);
+dDeal(); dRender(0); dRender(1);
+
+/* 18–19. Жеке жұмыс және бағалау */
+const TQ={A1:[5,1],A2:[20,1],A3:[1500,1],B1:[200,1],B2:[.0002,1],C1:[400,2]};
+const MAXP=7;
+let ROSTER=store.get('kl_roster',null)||store.get('ms_roster',null); if(!ROSTER){ ROSTER=[]; for(let i=1;i<=20;i++) ROSTER.push(i+'-оқушы'); }
+let RES=store.get('kl_res',{}), who=0;
+const pts=n=>Object.values(RES[n]||{}).reduce((a,r)=>a+(r.p||0),0);
+const mark=p=>p>=6?5:p>=4?4:p>=2?3:2;
+function tkFill(){ const sel=$('tkWho'); sel.innerHTML=ROSTER.map((n,i)=>`<option value="${i}">${i+1}. ${n}</option>`).join(''); if(who>=ROSTER.length) who=0; sel.value=who; tkLoad(); }
+function tkLoad(){ const r=RES[ROSTER[who]]||{};
+  document.querySelectorAll('[data-q]').forEach(inp=>{ const q=inp.dataset.q, s=r[q], out=inp.parentElement.querySelector('.r');
+    inp.value=s?s.v:''; inp.className=s&&s.done?(s.p>0?'okk':'nok'):''; inp.disabled=!!(s&&s.done);
+    out.innerHTML=!s?'':s.done?(s.p>0?`<span class="good">✔ +${nf(s.p,1)}</span>`:`<span class="bad">✘ ${nf(TQ[q][0],5)}</span>`):'<span class="bad">✘ тағы 1 мүмкіндік</span>'; });
+  $('tkScore').textContent=nf(pts(ROSTER[who]),1)+' / '+MAXP+' балл'; }
+function tkCheck(inp){ const q=inp.dataset.q, n=ROSTER[who]; if(!n) return; const v=parseNum(inp.value); if(!isFinite(v)){ toast('Санды жаз'); return; }
+  const r=RES[n]=RES[n]||{}; const s=r[q]=r[q]||{t:0,p:0,v:'',done:false}; if(s.done) return;
+  s.t++; s.v=inp.value; if(near(v,TQ[q][0])){ s.p=s.t===1?TQ[q][1]:TQ[q][1]/2; s.done=true; SND.ok(); } else { SND.bad(); if(s.t>=2){ s.done=true; s.p=0; } }
+  store.set('kl_res',RES); tkLoad(); grBuild(); }
+document.querySelectorAll('[data-q]').forEach(inp=>{ inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ tkCheck(inp); e.preventDefault(); } });
+  const b=document.createElement('button'); b.className='btn'; b.style.cssText='padding:3px 9px;font-size:14px'; b.textContent='✓'; b.title='Тексеру'; b.onclick=()=>tkCheck(inp); inp.after(b); });
+$('tkWho').onchange=()=>{ who=+$('tkWho').value; tkLoad(); };
+$('tkPrev').onclick=()=>{ who=(who-1+ROSTER.length)%ROSTER.length; $('tkWho').value=who; tkLoad(); };
+$('tkNext').onclick=()=>{ who=(who+1)%ROSTER.length; $('tkWho').value=who; tkLoad(); };
+function grBuild(){ let h='<tr><th>№</th><th>Аты-жөні</th><th>A (3)</th><th>B (2)</th><th>C (2)</th><th>Барлығы</th><th>Баға</th></tr>', c=[0,0,0];
+  ROSTER.forEach((n,i)=>{ const r=RES[n]||{}, sum=k=>Object.entries(r).filter(([q])=>q[0]===k).reduce((a,[,s])=>a+(s.p||0),0), p=pts(n), any=Object.keys(r).length;
+    if(any) c[p>=6?0:p>=4?1:2]++;
+    h+=`<tr><td>${i+1}</td><td class="l">${n}</td><td>${any?nf(sum('A'),1):''}</td><td>${any?nf(sum('B'),1):''}</td><td>${any?nf(sum('C'),1):''}</td><td><b>${any?nf(p,1):''}</b></td><td><b>${any?'«'+mark(p)+'»':''}</b></td></tr>`; });
+  $('grTab').innerHTML=h; $('g1').textContent=c[0]; $('g2').textContent=c[1]; $('g3').textContent=c[2]; }
+$('roster').value=ROSTER.join('\n');
+$('rsSave').onclick=()=>{ const l=$('roster').value.split('\n').map(s=>s.trim()).filter(Boolean); if(!l.length){ toast('Тізім бос'); return; } ROSTER=l; store.set('kl_roster',ROSTER); tkFill(); grBuild(); gdShow(); toast('Тізім сақталды: '+l.length+' оқушы'); };
+$('grClr').onclick=()=>{ if(!confirm('Барлық оқушының нәтижесі өшеді. Жалғастырамыз ба?')) return; RES={}; store.set('kl_res',RES); tkLoad(); grBuild(); };
+tkFill(); grBuild();
+/* 18. Бағдаршам */
+let LT=store.get('kl_lt',[0,0,0]);
+function ltShow(){ document.querySelectorAll('.lt .c').forEach((c,i)=>c.textContent=LT[i]); const n=LT[0]+LT[1]+LT[2]; [...$('lBar').children].forEach((b,i)=>b.style.width=(n?LT[i]/n*100:0)+'%'); store.set('kl_lt',LT); }
+document.querySelectorAll('.lt .c').forEach(c=>c.onclick=()=>{ LT[+c.dataset.l]++; SND.clink(); ltShow(); });
+document.querySelectorAll('.lt .mn').forEach(b=>b.onclick=()=>{ const i=+b.dataset.m; LT[i]=Math.max(0,LT[i]-1); ltShow(); });
+$('lClr').onclick=()=>{ LT=[0,0,0]; ltShow(); }; ltShow();
+
+/* ---------- тақта ---------- */
+const board=(()=>{ const cv=$('ink'), ctx=cv.getContext('2d'); let ink=store.get('kl_ink',{}), color='#f2efe2', width=3.6, eraser=false, curS=null, saveT;
+  const list=()=> (ink[cur]=ink[cur]||[]);
+  function resize(){ const r=cv.getBoundingClientRect(); if(!r.width) return; const k=window.devicePixelRatio||1; cv.width=Math.round(r.width*k); cv.height=Math.round(r.height*k); redraw(); }
+  function seg(s,i){ const W=cv.width,H=cv.height,p=s.p,base=s.w*W/600; ctx.globalCompositeOperation=s.e?'destination-out':'source-over'; ctx.strokeStyle=s.c; ctx.lineCap='round'; ctx.lineJoin='round';
+    if(i===0){ ctx.lineWidth=base*(.6+p[0][2]*.8); ctx.beginPath(); ctx.moveTo(p[0][0]*W,p[0][1]*H); ctx.lineTo(p[0][0]*W+.1,p[0][1]*H); ctx.stroke(); return; }
+    const a=p[i-1],b=p[i],z=p[i-2]||a; ctx.lineWidth=base*(.6+b[2]*.8); ctx.beginPath(); ctx.moveTo((z[0]+a[0])/2*W,(z[1]+a[1])/2*H); ctx.quadraticCurveTo(a[0]*W,a[1]*H,(a[0]+b[0])/2*W,(a[1]+b[1])/2*H); ctx.stroke(); }
+  function redraw(){ ctx.globalCompositeOperation='source-over'; ctx.clearRect(0,0,cv.width,cv.height); for(const s of list()) for(let i=0;i<s.p.length;i++) seg(s,i); ctx.globalCompositeOperation='source-over'; }
+  function save(){ clearTimeout(saveT); saveT=setTimeout(()=>store.set('kl_ink',ink),400); }
+  function pt(e){ const r=cv.getBoundingClientRect(); return [(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height,e.pointerType==='pen'?(e.pressure||.5):.5]; }
+  cv.addEventListener('pointerdown',e=>{ if(e.button>0&&e.pointerType==='mouse') return; cv.setPointerCapture(e.pointerId); curS={c:color,w:eraser?width*5:width,e:eraser,p:[pt(e)]}; list().push(curS); seg(curS,0); e.preventDefault(); });
+  cv.addEventListener('pointermove',e=>{ if(!curS) return; const evs=e.getCoalescedEvents?e.getCoalescedEvents():[e]; for(const ev of evs){ curS.p.push(pt(ev)); seg(curS,curS.p.length-1); } });
+  const end=()=>{ if(curS){ curS=null; ctx.globalCompositeOperation='source-over'; save(); } };
+  cv.addEventListener('pointerup',end); cv.addEventListener('pointercancel',end); cv.addEventListener('lostpointercapture',end);
+  document.querySelectorAll('.sw').forEach(b=>b.onclick=()=>{ color=b.dataset.c; eraser=false; $('erase').classList.remove('on'); document.querySelectorAll('.sw').forEach(x=>x.classList.toggle('on',x===b)); });
+  document.querySelectorAll('[data-w]').forEach(b=>b.onclick=()=>{ width=+b.dataset.w; document.querySelectorAll('[data-w]').forEach(x=>x.classList.toggle('on',x===b)); });
+  $('erase').onclick=()=>{ eraser=!eraser; $('erase').classList.toggle('on',eraser); };
+  function undo(){ list().pop(); redraw(); save(); } $('undo').onclick=undo;
+  $('wipe').onclick=()=>{ if(!list().length) return; ink[cur]=[]; redraw(); save(); toast('Осы беттегі жазба тазаланды'); };
+  return {resize,redraw,undo}; })();
+
+/* ---------- слайдты сыйғызу (тақта ашық/жабық) ---------- */
+const slides=[...document.querySelectorAll('.slide')]; let cur=0;
+slides.forEach(s=>{ if(s.classList.contains('nofit')) return; const sc=document.createElement('div'); sc.className='sc'; while(s.firstChild) sc.appendChild(s.firstChild); s.appendChild(sc); });
+function fitSlide(s){ if(!s||s.classList.contains('nofit')) return; const sc=s.querySelector('.sc'), L=$('slides');
+  const AW=L.clientWidth-48, AH=L.clientHeight-26; if(AW<=0) return; let best={k:0,w:900};
+  sc.style.transform='none';
+  for(let w=880; w<=Math.max(880,Math.min(1500,AW)); w+=40){ sc.style.width=w+'px'; const h=sc.offsetHeight; const k=Math.min(AW/w,AH/h,1.75); if(k>best.k+.004) best={k,w}; }
+  sc.style.width=best.w+'px'; sc.style.left=(24+(AW-best.w*best.k)/2)+'px'; sc.style.transform=`scale(${best.k})`; }
+let NB=store.get('kl_noboard',false);
+function setBoard(hidden){ NB=hidden; store.set('kl_noboard',NB); $('stage').classList.toggle('noboard',NB); $('rightw').style.transform=''; fitSlide(slides[cur]); setTimeout(()=>{ fitSlide(slides[cur]); board.resize(); },380); }
+$('hideB').onclick=()=>setBoard(true);
+(()=>{ // тақтаны қолмен оңға ысыру → жасырылады; оң жақтағы «ТАҚТА» белгісін басу → қайта шығады
+  const g=$('grip'), rw=$('rightw'); let x0=null;
+  const k=()=>$('stage').getBoundingClientRect().width/1600;
+  g.addEventListener('pointerdown',e=>{ x0=e.clientX; g.setPointerCapture(e.pointerId); rw.classList.add('drag'); e.preventDefault(); });
+  g.addEventListener('pointermove',e=>{ if(x0===null) return; const dx=Math.max(0,(e.clientX-x0)/k()); rw.style.transform=`translateX(${dx}px)`; });
+  const up=e=>{ if(x0===null) return; const dx=(e.clientX-x0)/k(); x0=null; rw.classList.remove('drag'); if(dx>110) setBoard(true); else rw.style.transform=''; };
+  g.addEventListener('pointerup',up); g.addEventListener('pointercancel',up);
+  $('btab').addEventListener('pointerdown',e=>{ e.preventDefault(); setBoard(false); });
+})();
+
+ptBuild(); rsBuild();
+/* ---------- навигация ---------- */
+slides.forEach((s,i)=>{ const b=document.createElement('button'); b.className='dot'+(s.dataset.wide?' gm':''); b.textContent=i+1; b.title=s.dataset.title; b.onclick=()=>go(i); $('dots').appendChild(b); });
+function go(i){ i=Math.max(0,Math.min(slides.length-1,i)); if(i!==cur) SND.page(); slides[cur].classList.remove('on'); cur=i; const s=slides[cur]; s.classList.add('on');
+  $('stitle').textContent=s.dataset.title; $('bhint').textContent=s.dataset.hint||''; $('stage').classList.toggle('wide',!!s.dataset.wide);
+  [...$('dots').children].forEach((d,j)=>d.classList.toggle('on',j===cur)); $('cnt').textContent=(cur+1)+' / '+slides.length;
+  $('prev').disabled=cur===0; $('next').disabled=cur===slides.length-1; store.set('kl_slide',cur); fitSlide(s); requestAnimationFrame(()=>{ board.resize(); fitSlide(s); }); }
+$('prev').onclick=()=>go(cur-1); $('next').onclick=()=>go(cur+1);
+document.addEventListener('keydown',e=>{ const typing=/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName);
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'&&!typing){ board.undo(); e.preventDefault(); return; } if(typing) return;
+  if(['ArrowRight','PageDown'].includes(e.key)){ go(cur+1); e.preventDefault(); } else if(['ArrowLeft','PageUp'].includes(e.key)){ go(cur-1); e.preventDefault(); }
+  else if('fFаА'.includes(e.key)) toggleFS(); else if('tTеЕ'.includes(e.key)) setBoard(!NB); });
+function toggleFS(){ try{ if(!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }catch(e){} }
+$('fs').onclick=toggleFS; $('snd').onclick=()=>{ $('snd').textContent=SND.toggle()?'🔊':'🔇'; }; $('snd').textContent=SND.on?'🔊':'🔇';
+function fit(){ const s=Math.min(innerWidth/1600,innerHeight/900); $('stage').style.transform=`translate(${(innerWidth-1600*s)/2}px,${(innerHeight-900*s)/2}px) scale(${s})`; board.resize(); }
+addEventListener('resize',fit); $('slides').classList.add('notrans'); $('stage').classList.toggle('noboard',NB); fit(); setTimeout(()=>$('slides').classList.remove('notrans'),200);
+$('slides').addEventListener('transitionend',e=>{ if(e.target===$('slides')){ fitSlide(slides[cur]); board.resize(); } });
+const hashN=/^#(\d+)$/.exec(location.hash); go(hashN?(+hashN[1]-1):Math.min(store.get('kl_slide',0),slides.length-1));
+addEventListener('hashchange',()=>{ const m=/^#(\d+)$/.exec(location.hash); if(m) go(+m[1]-1); });
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>fitSlide(slides[cur]));
+let prevT=performance.now();
+(function loop(now){ const dt=Math.min(.05,Math.max(0,(now-prevT)/1000)); prevT=now;
+  slides[cur].querySelectorAll('canvas.lab').forEach(cv=>{ const L=LABS[cv.id]; if(L) L.frame(cv.getContext('2d'),cv.width,cv.height,dt); });
+  for(const id in SC3D) if(slides[cur].contains($(id))) SC3D[id](dt);
+  requestAnimationFrame(loop); })(prevT);
+</script>
+</body>
+</html>
